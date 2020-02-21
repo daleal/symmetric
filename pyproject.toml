@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "test"
+version = "0.1.0"
+description = "A simple test."
+authors = ["Daniel Leal <dlleal@uc.cl>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+flask = "^1.1.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.4"
+flake8 = "^3.7"
+
+[tool.black]
+line-length = 99
+target-version = ["py36", "py37", "py38"]
+exclude = '/(\.venv|migrations)/'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
