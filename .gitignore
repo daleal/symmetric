@@ -1,0 +1,15 @@
+# Python stuff
+__pycache__
+
+# Editor stuff
+.vscode
+
+# Virtual Environent
+.venv
+
+# Logs
+*.log
+
+# External program testing
+program
+main.py
