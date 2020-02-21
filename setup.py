@@ -20,6 +20,7 @@ setuptools.setup(
     description="A simple wrapper over Flask to speed up basic "
                 "API deployments.",
     long_description=readme,
+    long_description_content_type="text/markdown",
     classifiers=[
         "Environment :: Web Environment",
         "Intended Audience :: Developers",

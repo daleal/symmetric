@@ -169,14 +169,14 @@ Recreate environment:
 Build the project:
 
 ```bash
-poetry build
+rm -rf dist
+python setup.py sdist bdist_wheel
 ```
 
 Push to `TestPyPi`:
 
 ```bash
-poetry config repositories.testpypi https://test.pypi.org/legacy/
-poetry publish -r testpypi
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
 Download from `TestPyPi`:
@@ -192,5 +192,5 @@ python -m pip install --index-url https://test.pypi.org/simple/ symmetric
 Push to `PyPi`:
 
 ```bash
-poetry publish
+twine upload dist/*
 ```
