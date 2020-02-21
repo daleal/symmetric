@@ -1,5 +1,5 @@
 # Create virtual environment
-python3.8 -m venv .venv
+python3 -m venv .venv
 
 # Activate it
 . .venv/bin/activate
