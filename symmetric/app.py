@@ -7,8 +7,6 @@ import json
 import flask
 import logging.config
 
-from .helpers import verb, log_request
-
 
 # Logging configuration
 logging.config.dictConfig({
@@ -57,6 +55,9 @@ ALLOWED_METHODS = [
 app = flask.Flask(__name__)
 
 
+from .helpers import verb, log_request
+
+
 def router(route, methods=["get"], response_code=200):
     """
     Decorator modifier. Recieves a route string, a list of HTTP methods and
@@ -71,7 +72,7 @@ def router(route, methods=["get"], response_code=200):
         Function decorator. Recieves the main function and wraps it as a
         flask endpoint. Returns the wrapped function.
         """
-        @app.route(route, methods=methods)
+        @app.route(route, methods=methods, endpoint=function.__name__)
         def wrapper(*args, **kwargs):
             """
             Function wrapper. The main function gets logged, the JSON body
@@ -82,7 +83,9 @@ def router(route, methods=["get"], response_code=200):
             """
             try:
                 log_request(flask.request, route, function)
-                body = flask.request.get_json(force=True)
+                body = flask.request.get_json()
+                if not body:
+                    body = {}
                 return flask.jsonify(function(**body)), response_code
             except Exception as err:
                 app.logger.error(f"[[symmetric]] exception caught: {err}")

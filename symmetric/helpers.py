@@ -2,6 +2,10 @@
 A module for every helper of symmetric.
 """
 
+import json
+
+from .app import app
+
 
 def verb(dirty):
     """
@@ -20,7 +24,9 @@ def log_request(request, route, function):
         f"{request.method} request to '{route}' endpoint "
         f"('{function.__name__}' function)."
     )
-    log_body(request.get_json(force=True))
+    body = request.get_json()
+    if body:
+        log_body(body)
 
 
 def log_body(body):
