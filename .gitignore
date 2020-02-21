@@ -12,6 +12,7 @@ dist/
 
 # Virtual Environment
 .venv
+.testing-venv
 
 # Logs
 *.log
