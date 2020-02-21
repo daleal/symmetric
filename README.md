@@ -16,6 +16,8 @@ pip install --user symmetric
 
 ## Usage
 
+### Defining the API endpoints
+
 ```py
 from symmetric import router, app
 ```
@@ -27,7 +29,7 @@ if __name__ == '__main__':
     app.run()
 ```
 
-Add that code to one of your modules. Then, run `python module.py`. A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000). We don't have any endpoints yet, so we'll add some (given that `app` is a `Flask` object, any `WGSI` server can be used to run the API, [gunicorn](https://gunicorn.org/) is a good example).
+Add that code to one of your modules. Then, run `python module.py`. A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000). We don't have any endpoints yet, so we'll add some (given that `app` is a `Flask` object, any `WSGI` server can be used to run the API, [gunicorn](https://gunicorn.org/) is a good example).
 
 Let's now analyze our `router` decorator:
 
@@ -69,7 +71,9 @@ def another_function(a, b):
     return a + b
 ```
 
-To give the parameters to the function, all we need to do is send a `json` body with the name of the parameters as key. Let's see how! Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
+### Querying API endpoints
+
+To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
 
 ```python
 import requests
@@ -86,6 +90,63 @@ We got a `69` response! (`48 + 21 = 69`). Of course, you can return dictionaries
 
 With this in mind, you can transform any existing project into a usable API very quickly!
 
+### The whole example
+
+To sum up, if the original `module.py` file looked like this before `symmetric`:
+
+```py
+def some_function():
+    return "Hello World!"
+
+
+def another_function(a, b):
+    return a + b
+```
+
+The complete final `module.py` file with `symmetric` should look like this:
+
+```py
+from symmetric import router, app
+
+
+@router("/sample")
+def some_function():
+    return "Hello World!"
+
+
+@router("/add")
+def another_function(a, b):
+    return a + b
+
+
+if __name__ == '__main__':
+    app.run()
+```
+
+To run the server, just run `python module.py`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/add`. Here is a simple file to get you started querying your API:
+
+```py
+import requests
+
+
+def call_sample():
+    response = requests.get("http://127.0.0.1:5000/sample")
+    return response.text
+
+
+def call_add():
+    payload = {
+        "a": 48,
+        "b": 21
+    }
+    response = requests.get("http://127.0.0.1:5000/add", json=payload)
+    return response.json()
+
+
+if __name__ == '__main__':
+    print(call_sample())
+    print(call_add())
+```
 
 ## Developing
 
