@@ -4,7 +4,7 @@ with open("README.md", "r") as raw_readme:
     readme = raw_readme.read()
 
 setuptools.setup(
-    name="Symmetric",
+    name="symmetric",
     version="0.0.5",
     url="https://github.com/daleal/symmetric",
     project_urls={

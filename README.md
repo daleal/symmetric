@@ -4,7 +4,7 @@ A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up 
 
 ## Why Symmetric?
 
-While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, specially if you have never used it before. The idea behind `Symmetric` is to be able to take any module and transform it into a working API, instead of having to design the module ground-up to work with `Flask`.
+While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, specially if you have never used it before. The idea behind `symmetric` is to be able to take any module and transform it into a working API, instead of having to design the module ground-up to work with `Flask`.
 
 ## Installing
 
