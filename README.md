@@ -1,6 +1,6 @@
 # Symmetric
 
-A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up basic API deployments.
+A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up basic **[API](https://en.wikipedia.org/wiki/Web_API)** deployments.
 
 ## Why Symmetric?
 
@@ -19,22 +19,22 @@ pip install --user symmetric
 ### Defining the API endpoints
 
 ```py
-from symmetric import router, app
+from symmetric import symmetric
 ```
 
-The module consists of two main objects: the `router` decorator and the `app` object. Let's start with the `app` object:
+The module consists of a main object called `symmetric`, which includes an important element: the `router` decorator. Let's start with how to run the API server:
 
 ```py
 if __name__ == '__main__':
-    app.run()
+    symmetric.run()
 ```
 
-Add that code to one of your modules. Then, run `python module.py`. A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000). We don't have any endpoints yet, so we'll add some (given that `app` is a `Flask` object, any `WSGI` server can be used to run the API, [gunicorn](https://gunicorn.org/) is a good example).
+Add that code to one of your modules. Then, run `python module.py`. A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000). We don't have any endpoints yet, so we'll add some later. You can also use any `WSGI` server to run the API. For example, to run the API using [gunicorn](https://gunicorn.org/), you just need to run `gunicorn module:symmetric` (the `if __name__ == "__main__":` part of the file would then not be necessary).
 
 Let's now analyze our `router` decorator:
 
 ```py
-@router("/some-route", methods=["get"], response_code=200)
+@symmetric.router("/some-route", methods=["get"], response_code=200)
 ```
 
 The decorator recieves 3 arguments: the `route` argument (the endpoint of the API to which the decorated function will map), the `methods` argument (a list of the methods accepted to connect to that endpoint, defaults in only `GET` requests) and the `response_code` argument (the response code of the endpoint if everything goes according to the plan. Defaults to `200`).
@@ -49,12 +49,12 @@ def some_function():
 To transform that method into an API endpoint, all you need to do is add one line:
 
 ```py
-@router("/sample")
+@symmetric.router("/sample")
 def some_function():
     return "Hello World!"
 ```
 
-Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/sample`. You should get a `Hello World!` in response! (To try it with a browser, just click [this link](http://127.0.0.1:5000/sample)).
+Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/sample`. You should get a `Hello World!` in response! (To try it with a browser, make sure to run the above command and click [this link](http://127.0.0.1:5000/sample)).
 
 But what about methods with arguments? Of course they can be API'd too! Let's now say that you have the following function:
 
@@ -66,7 +66,7 @@ def another_function(a, b):
 To transform that method into an API endpoint, all you need to do, again, is add one line:
 
 ```py
-@router("/add")
+@symmetric.router("/add")
 def another_function(a, b):
     return a + b
 ```
@@ -106,21 +106,21 @@ def another_function(a, b):
 The complete final `module.py` file with `symmetric` should look like this:
 
 ```py
-from symmetric import router, app
+from symmetric import symmetric
 
 
-@router("/sample")
+@symmetric.router("/sample")
 def some_function():
     return "Hello World!"
 
 
-@router("/add")
+@symmetric.router("/add")
 def another_function(a, b):
     return a + b
 
 
 if __name__ == '__main__':
-    app.run()
+    symmetric.run()
 ```
 
 To run the server, just run `python module.py`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/add`. Here is a simple file to get you started querying your API:
