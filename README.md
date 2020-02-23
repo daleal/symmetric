@@ -1,6 +1,6 @@
 # Symmetric
 
-![](https://github.com/daleal/symmetric/workflows/litners/badge.svg)
+![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
 
 A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up basic **[API](https://en.wikipedia.org/wiki/Web_API)** deployments.
 
