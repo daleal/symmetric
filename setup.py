@@ -4,8 +4,8 @@ with open("README.md", "r") as raw_readme:
     readme = raw_readme.read()
 
 setuptools.setup(
-    name="Symmetric",
-    version="0.0.4",
+    name="symmetric",
+    version="1.0.0",
     url="https://github.com/daleal/symmetric",
     project_urls={
         "Documentation": "https://github.com/daleal/symmetric",
@@ -20,6 +20,7 @@ setuptools.setup(
     description="A simple wrapper over Flask to speed up basic "
                 "API deployments.",
     long_description=readme,
+    long_description_content_type="text/markdown",
     classifiers=[
         "Environment :: Web Environment",
         "Intended Audience :: Developers",

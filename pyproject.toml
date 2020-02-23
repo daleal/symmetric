@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "Symmetric"
-version = "0.0.4"
+name = "symmetric"
+version = "1.0.0"
 description = "A simple wrapper over Flask to speed up basic API deployments."
 authors = ["Daniel Leal <dlleal@uc.cl>"]
 
