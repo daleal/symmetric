@@ -7,6 +7,23 @@ import argparse
 import symmetric.utils
 
 
+def dispatcher():
+    """
+    Main CLI method, recieves the command line action and dispatches it to
+    the corresponding method.
+    """
+    parser = generate_parser()
+
+    args = parser.parse_args()
+
+    if args.action == "run":
+        symmetric.utils.start_server(
+            args.module, args.server, args.port, args.debug
+        )
+    elif args.action == "docs":
+        symmetric.utils.document_api(args.module, args.filename)
+
+
 def generate_parser():
     """Generates the CLI parser for the module."""
     # Create parser
@@ -22,6 +39,9 @@ def generate_parser():
 
     # Runner parser
     generate_runner_subparser(subparsers)
+
+    # Documentation parser
+    generate_documentation_subparser(subparsers)
 
     return parser
 
@@ -66,19 +86,25 @@ def generate_runner_subparser(subparsers):
     )
 
 
-def dispatcher():
-    """
-    Main CLI method, recieves the command line action and dispatches it to
-    the corresponding method.
-    """
-    parser = generate_parser()
+def generate_documentation_subparser(subparsers):
+    """Generates the subparser for the auto-documentation option."""
+    documentation_parser = subparsers.add_parser("docs")
+    documentation_parser.set_defaults(action="docs")
 
-    args = parser.parse_args()
+    # Module name
+    documentation_parser.add_argument(
+        "module",
+        metavar="module",
+        help="Name of the module that uses the symmetric object."
+    )
 
-    if args.action == "run":
-        symmetric.utils.start_server(
-            args.module, args.server, args.port, args.debug
-        )
+    # Filename
+    documentation_parser.add_argument(
+        "-f", "--filename",
+        dest="filename",
+        default="documentation.md",
+        help="Name of the file in where to write the documentation."
+    )
 
 
 if __name__ == "__main__":

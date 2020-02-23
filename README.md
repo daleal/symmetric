@@ -6,7 +6,11 @@ A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up 
 
 ## Why Symmetric?
 
-While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, specially if you have never used it before. The idea behind `symmetric` is to be able to take any module and transform it into a working API, instead of having to design the module ground-up to work with `Flask`.
+While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, specially if you have never used it before. The idea behind `symmetric` is to be able to take any module and transform it into a working API, instead of having to design the module ground-up to work with `Flask`. With `symmetric`, you will also get some neat features, namely:
+
+- Auto logging.
+- Server-side error detection and exception handling.
+- Auto-generated documentation for your API.
 
 ## Installing
 
@@ -18,17 +22,19 @@ pip install --user symmetric
 
 ## Usage
 
-### Defining the API endpoints
+### Running the development server
 
-The module consists of a main object called `symmetric`, which includes an important element: the `router` decorator. Let's start with how to run the API server:
+To start the development server, just run:
 
 ```bash
-symmetric run module
+symmetric run <module>
 ```
 
-Where `module` is your module name (in the examples, we will be writing in a file named `module.py`). A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000) by default. We don't have any endpoints yet, so we'll add some later. **Do not use this in production**. The `Flask` server is meant for development only. Instead, you can use any `WSGI` server to run the API. For example, to run the API using [gunicorn](https://gunicorn.org/), you just need to run `gunicorn module:symmetric` and a production ready server will be spawned.
+Where `<module>` is your module name (in the examples, we will be writing in a file named `module.py`, so the module name will be just `module`). A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000) by default. We don't have any endpoints yet, so we'll add some later. **Do not use this in production**. The `Flask` server is meant for development only. Instead, you can use any `WSGI` server to run the API. For example, to run the API using [gunicorn](https://gunicorn.org/), you just need to run `gunicorn module:symmetric` and a production ready server will be spawned.
 
-Let's now analyze our `router` decorator:
+### Defining the API endpoints
+
+The module consists of a main object called `symmetric`, which includes an important element: the `router` decorator. Let's analyze it:
 
 ```py
 from symmetric import symmetric
@@ -42,6 +48,7 @@ Now let's imagine that we have the following method:
 
 ```py
 def some_function():
+    """Greets the world."""
     return "Hello World!"
 ```
 
@@ -50,6 +57,7 @@ To transform that method into an API endpoint, all you need to do is add one lin
 ```py
 @symmetric.router("/sample")
 def some_function():
+    """Greets the world."""
     return "Hello World!"
 ```
 
@@ -58,7 +66,11 @@ Run `symmetric run module` and send a `GET` request to `http://127.0.0.1:5000/sa
 But what about methods with arguments? Of course they can be API'd too! Let's now say that you have the following function:
 
 ```py
-def another_function(a, b):
+def another_function(a, b=372):
+    """
+    Adds :a and :b and returns the result of
+    that operation.
+    """
     return a + b
 ```
 
@@ -66,9 +78,25 @@ To transform that method into an API endpoint, all you need to do, again, is add
 
 ```py
 @symmetric.router("/add")
-def another_function(a, b):
+def another_function(a, b=372):
+    """
+    Adds :a and :b and returns the result of
+    that operation.
+    """
     return a + b
 ```
+
+### Auto-generating the API documentation
+
+Generating API documentation is simple with `symmetric`. Just run the following command:
+
+```bash
+symmetric docs <module>
+```
+
+This will **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and `HTTP` methods. Seems too simple to be true, right? Go ahead, try it yourself!
+
+You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `-filename` flag.
 
 ### Querying API endpoints
 
@@ -95,10 +123,15 @@ To sum up, if the original `module.py` file looked like this before `symmetric`:
 
 ```py
 def some_function():
+    """Greets the world."""
     return "Hello World!"
 
 
-def another_function(a, b):
+def another_function(a, b=372):
+    """
+    Adds :a and :b and returns the result of
+    that operation.
+    """
     return a + b
 ```
 
@@ -110,11 +143,16 @@ from symmetric import symmetric
 
 @symmetric.router("/sample")
 def some_function():
+    """Greets the world."""
     return "Hello World!"
 
 
 @symmetric.router("/add")
-def another_function(a, b):
+def another_function(a, b=372):
+    """
+    Adds :a and :b and returns the result of
+    that operation.
+    """
     return a + b
 ```
 
@@ -142,6 +180,43 @@ if __name__ == '__main__':
     print(call_sample())
     print(call_add())
 ```
+
+Running `symmetric docs module` would result in a file `documentation.md` being created with the following content:
+
+``````md
+# Module API Documentation
+
+## `/add`
+
+### Description
+
+`HTTP` methods accepted: `GET`
+
+Adds :a and :b and returns the result of
+that operation.
+
+### Parameters
+
+```py
+{
+    a,
+    b,  # defaults to 372
+}
+```
+
+## `/sample`
+
+### Description
+
+`HTTP` methods accepted: `GET`
+
+Greets the world.
+
+### Parameters
+
+No required parameters.
+
+``````
 
 ## Developing
 

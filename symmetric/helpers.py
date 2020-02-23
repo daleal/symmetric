@@ -15,6 +15,14 @@ def verb(dirty):
     return dirty.strip().upper()
 
 
+def humanize(module_name):
+    """Transforms a module name into a pretty human-likable string."""
+    module_name = module_name.lower()
+    module_name = module_name.replace('_', ' ').replace('-', ' ')
+    module_name = module_name.title()
+    return module_name
+
+
 def log_request(request, route, function):
     """
     Recieves a request object, a route string and a function and

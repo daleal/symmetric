@@ -5,7 +5,10 @@ The main module of symmetric.
 import os
 import json
 import flask
+import bisect
 import logging.config
+
+import symmetric.endpoints
 
 
 # Logging configuration
@@ -43,7 +46,7 @@ logging.config.dictConfig({
 app = flask.Flask(__name__)
 
 
-from .helpers import verb, log_request
+from symmetric.helpers import verb, humanize, log_request
 
 
 class Symmetric:
@@ -65,6 +68,7 @@ class Symmetric:
 
     def __init__(self, app):
         self.__app = app
+        self.__endpoints = []
 
     def __call__(self, *args, **kwargs):
         """
@@ -90,6 +94,14 @@ class Symmetric:
             Function decorator. Recieves the main function and wraps it as a
             flask endpoint. Returns the wrapped function.
             """
+            # Save endpoint
+            self.__save_endpoint(
+                symmetric.endpoints.Endpoint(
+                    route, methods, response_code, function
+                )
+            )
+
+            # Decorate the wrapper
             @self.__app.route(
                 route, methods=methods, endpoint=function.__name__
             )
@@ -119,6 +131,20 @@ class Symmetric:
         """Executes the main run function of the Flask object."""
         self.__app.run(*args, **kwargs)
 
+    def generate_documentation(self, module_name):
+        """
+        Gets the documentation of every endpoint and assembles it into a
+        markdown formatted string.
+        """
+        raw_docs = [x.generate_documentation() for x in self.__endpoints]
+        docs = f"# {humanize(module_name)} API Documentation\n\n"
+        docs += "\n".join(raw_docs)
+        return docs
+
+    def __save_endpoint(self, endpoint):
+        """Saves an endpoint object and sorts the endpoints list."""
+        bisect.insort(self.__endpoints, endpoint)
+
 
 # Create symmetric object
-symmetric = Symmetric(app)
+sym = Symmetric(app)

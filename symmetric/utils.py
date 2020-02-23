@@ -12,11 +12,21 @@ import symmetric.errors
 
 def start_server(module, server, port, debug):
     """
-    Gets the symmetric object and then calls it with the parameters given
+    Gets the symmetric object and then runs it with the parameters given
     to the method.
     """
     symmetric_object = get_symmetric_object(module, debug)
     symmetric_object.run(host=server, port=port, debug=debug)
+
+
+def document_api(module, filename):
+    """
+    Gets the symmetric object and then calls the documentation method.
+    """
+    symmetric_object = get_symmetric_object(module, True)
+    docs = symmetric_object.generate_documentation(module)
+    with open(filename, "w") as docs_file:
+        docs_file.write(docs)
 
 
 def get_symmetric_object(module_name, debug):
