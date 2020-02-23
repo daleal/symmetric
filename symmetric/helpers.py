@@ -4,7 +4,7 @@ A module for every helper of symmetric.
 
 import json
 
-from .app import app
+from symmetric.core import app
 
 
 def verb(dirty):
@@ -13,6 +13,14 @@ def verb(dirty):
     it and returns it uppercased.
     """
     return dirty.strip().upper()
+
+
+def humanize(module_name):
+    """Transforms a module name into a pretty human-likable string."""
+    module_name = module_name.lower()
+    module_name = module_name.replace('_', ' ').replace('-', ' ')
+    module_name = module_name.title()
+    return module_name
 
 
 def log_request(request, route, function):
