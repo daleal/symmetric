@@ -161,7 +161,7 @@ Recreate environment:
 . .venv/bin/activate
 ```
 
-Build the project:
+Build the project (install `wheel` first):
 
 ```bash
 rm -rf dist
