@@ -90,7 +90,9 @@ class Symmetric:
             Function decorator. Recieves the main function and wraps it as a
             flask endpoint. Returns the wrapped function.
             """
-            @self.__app.route(route, methods=methods, endpoint=function.__name__)
+            @self.__app.route(
+                route, methods=methods, endpoint=function.__name__
+            )
             def wrapper(*args, **kwargs):
                 """
                 Function wrapper. The main function gets logged, the JSON body

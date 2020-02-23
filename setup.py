@@ -1,7 +1,11 @@
+"""
+Setup config file for PyPI deployment.
+"""
+
 import setuptools
 
 with open("README.md", "r") as raw_readme:
-    readme = raw_readme.read()
+    README = raw_readme.read()
 
 setuptools.setup(
     name="symmetric",
@@ -19,7 +23,7 @@ setuptools.setup(
     maintainer_email="dlleal@uc.cl",
     description="A simple wrapper over Flask to speed up basic "
                 "API deployments.",
-    long_description=readme,
+    long_description=README,
     long_description_content_type="text/markdown",
     classifiers=[
         "Environment :: Web Environment",

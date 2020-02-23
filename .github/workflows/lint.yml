@@ -1,0 +1,59 @@
+name: linters
+
+on:
+  push:
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".flake8"
+      - ".pylintrc"
+      - "**.py"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/lint.yml"
+      - ".flake8"
+      - ".pylintrc"
+      - "**.py"
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: Install Poetry
+        uses: dschep/install-poetry-action@v1.2
+
+      - run: sudo apt-get install libpq-dev
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Lint with Flake 8
+        run: poetry run flake8 .
+
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: Install Poetry
+        uses: dschep/install-poetry-action@v1.2
+
+      - run: sudo apt-get install libpq-dev
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Lint with Pylint
+        run: poetry run pylint *.py

@@ -1,1 +1,1 @@
-from .app import symmetric
+from .core import symmetric
