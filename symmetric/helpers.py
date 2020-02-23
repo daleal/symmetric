@@ -4,7 +4,7 @@ A module for every helper of symmetric.
 
 import json
 
-from .core import app
+from symmetric.core import app
 
 
 def verb(dirty):

@@ -4,12 +4,14 @@ Setup config file for PyPI deployment.
 
 import setuptools
 
+from symmetric import __version__
+
 with open("README.md", "r") as raw_readme:
     README = raw_readme.read()
 
 setuptools.setup(
     name="symmetric",
-    version="1.0.0",
+    version=__version__,
     url="https://github.com/daleal/symmetric",
     project_urls={
         "Documentation": "https://github.com/daleal/symmetric",
@@ -45,4 +47,9 @@ setuptools.setup(
     install_requires=[
         "flask>=1.1.1",
     ],
+    entry_points={
+        'console_scripts': [
+            'symmetric=symmetric.command_line_interface:dispatcher'
+        ],
+    },
 )

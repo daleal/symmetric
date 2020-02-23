@@ -20,22 +20,19 @@ pip install --user symmetric
 
 ### Defining the API endpoints
 
-```py
-from symmetric import symmetric
-```
-
 The module consists of a main object called `symmetric`, which includes an important element: the `router` decorator. Let's start with how to run the API server:
 
-```py
-if __name__ == '__main__':
-    symmetric.run()
+```bash
+symmetric run module
 ```
 
-Add that code to one of your modules. Then, run `python module.py`. A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000). We don't have any endpoints yet, so we'll add some later. You can also use any `WSGI` server to run the API. For example, to run the API using [gunicorn](https://gunicorn.org/), you just need to run `gunicorn module:symmetric` (the `if __name__ == "__main__":` part of the file would then not be necessary).
+Where `module` is your module name (in the examples, we will be writing in a file named `module.py`). A `Flask` instance will be spawned immediately and can be reached at [http://127.0.0.1:5000](http://127.0.0.1:5000) by default. We don't have any endpoints yet, so we'll add some later. **Do not use this in production**. The `Flask` server is meant for development only. Instead, you can use any `WSGI` server to run the API. For example, to run the API using [gunicorn](https://gunicorn.org/), you just need to run `gunicorn module:symmetric` and a production ready server will be spawned.
 
 Let's now analyze our `router` decorator:
 
 ```py
+from symmetric import symmetric
+
 @symmetric.router("/some-route", methods=["get"], response_code=200)
 ```
 
@@ -56,7 +53,7 @@ def some_function():
     return "Hello World!"
 ```
 
-Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/sample`. You should get a `Hello World!` in response! (To try it with a browser, make sure to run the above command and click [this link](http://127.0.0.1:5000/sample)).
+Run `symmetric run module` and send a `GET` request to `http://127.0.0.1:5000/sample`. You should get a `Hello World!` in response! (To try it with a browser, make sure to run the above command and click [this link](http://127.0.0.1:5000/sample)).
 
 But what about methods with arguments? Of course they can be API'd too! Let's now say that you have the following function:
 
@@ -75,7 +72,7 @@ def another_function(a, b):
 
 ### Querying API endpoints
 
-To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `python module.py` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
+To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `symmetric run module` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
 
 ```python
 import requests
@@ -119,13 +116,9 @@ def some_function():
 @symmetric.router("/add")
 def another_function(a, b):
     return a + b
-
-
-if __name__ == '__main__':
-    symmetric.run()
 ```
 
-To run the server, just run `python module.py`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/add`. Here is a simple file to get you started querying your API:
+To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/add`. Here is a simple file to get you started querying your API:
 
 ```py
 import requests
@@ -175,6 +168,17 @@ rm -rf dist
 python setup.py sdist bdist_wheel
 ```
 
+Test install:
+
+```bash
+deactivate
+rm -rf .testing-venv
+python3 -m venv .testing-venv
+. .testing-venv/bin/activate
+pip install click flask
+pip install --editable .
+```
+
 Push to `TestPyPi`:
 
 ```bash
@@ -188,6 +192,7 @@ deactivate
 rm -rf .testing-venv
 python3 -m venv .testing-venv
 . .testing-venv/bin/activate
+pip install click
 python -m pip install --index-url https://test.pypi.org/simple/ symmetric
 ```
 
