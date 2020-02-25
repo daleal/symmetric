@@ -17,7 +17,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 Install using pip!
 
 ```bash
-pip install --user symmetric
+pip install symmetric
 ```
 
 ## Usage
