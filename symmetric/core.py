@@ -3,10 +3,9 @@ The main module of symmetric.
 """
 
 import os
-import json
-import flask
 import bisect
 import logging.config
+import flask
 
 import symmetric.endpoints
 
@@ -66,8 +65,8 @@ class Symmetric:
         "TRACE"
     ]
 
-    def __init__(self, app):
-        self.__app = app
+    def __init__(self, app_object):
+        self.__app = app_object
         self.__endpoints = []
 
     def __call__(self, *args, **kwargs):

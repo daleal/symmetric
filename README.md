@@ -236,28 +236,23 @@ Recreate environment:
 . .venv/bin/activate
 ```
 
-Build the project (install `wheel` first):
+Build the project:
 
 ```bash
-rm -rf dist
-python setup.py sdist bdist_wheel
+poetry build
 ```
 
 Test install:
 
 ```bash
-deactivate
-rm -rf .testing-venv
-python3 -m venv .testing-venv
-. .testing-venv/bin/activate
-pip install click flask
-pip install --editable .
+poetry install  # will also install the symmetric CLI
 ```
 
 Push to `TestPyPi`:
 
 ```bash
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+poetry config repositories.testpypi https://test.pypi.org/legacy/
+poetry publish -r testpypi
 ```
 
 Download from `TestPyPi`:
@@ -274,5 +269,5 @@ python -m pip install --index-url https://test.pypi.org/simple/ symmetric
 Push to `PyPi`:
 
 ```bash
-twine upload dist/*
+poetry publish
 ```
