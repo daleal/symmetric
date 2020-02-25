@@ -33,10 +33,12 @@ def get_symmetric_object(module_name, debug):
     """
     Imports the module :module_name and the tries to find the
     symmetric object. This method is strongly inspired in gunicorn's own
-    import_app method.
+    import_app method and uvicorn's main method.
     """
     # Import the module
     try:
+        # Add current directory to path
+        sys.path.insert(0, ".")
         module = importlib.import_module(module_name)
     except ImportError:
         # If the user wrote module.py instead of just module
