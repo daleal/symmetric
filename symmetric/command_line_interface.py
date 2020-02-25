@@ -2,6 +2,7 @@
 A module to route the CLI traffic.
 """
 
+import sys
 import argparse
 
 import symmetric.utils
@@ -16,12 +17,17 @@ def dispatcher():
 
     args = parser.parse_args()
 
-    if args.action == "run":
-        symmetric.utils.start_server(
-            args.module, args.server, args.port, args.debug
-        )
-    elif args.action == "docs":
-        symmetric.utils.document_api(args.module, args.filename)
+    try:
+        if args.action == "run":
+            symmetric.utils.start_server(
+                args.module, args.server, args.port, args.debug
+            )
+        elif args.action == "docs":
+            symmetric.utils.document_api(args.module, args.filename)
+    except AttributeError:
+        print("An argument is required for the symmetric command.")
+        parser.print_help()
+        sys.exit(1)
 
 
 def generate_parser():
