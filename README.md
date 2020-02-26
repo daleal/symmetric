@@ -6,7 +6,7 @@ A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up 
 
 ## Why Symmetric?
 
-While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, specially if you have never used it before. The idea behind `symmetric` is to be able to take any module and transform it into a working API, instead of having to design the module ground-up to work with `Flask`. With `symmetric`, you will also get some neat features, namely:
+Raw developing speed and ease of use, that's why. While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, especially if you have never used it before. The idea behind `symmetric` is to be able to take any module **already written** and transform it into a working API in a matter of minutes, instead of having to design the module ground-up to work with `Flask` (it can also be used to build an API from scratch really fast). With `symmetric`, you will also get some neat features, namely:
 
 - Auto logging.
 - Server-side error detection and exception handling.
@@ -17,7 +17,7 @@ While `Flask` is a powerful tool to have, getting it to work from scratch can be
 Install using pip!
 
 ```bash
-pip install --user symmetric
+pip install symmetric
 ```
 
 ## Usage
@@ -96,7 +96,7 @@ symmetric docs <module>
 
 This will **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and `HTTP` methods. Seems too simple to be true, right? Go ahead, try it yourself!
 
-You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `-filename` flag.
+You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `--filename` flag.
 
 ### Querying API endpoints
 
@@ -236,28 +236,23 @@ Recreate environment:
 . .venv/bin/activate
 ```
 
-Build the project (install `wheel` first):
+Build the project:
 
 ```bash
-rm -rf dist
-python setup.py sdist bdist_wheel
+poetry build
 ```
 
 Test install:
 
 ```bash
-deactivate
-rm -rf .testing-venv
-python3 -m venv .testing-venv
-. .testing-venv/bin/activate
-pip install click flask
-pip install --editable .
+poetry install  # will also install the symmetric CLI
 ```
 
 Push to `TestPyPi`:
 
 ```bash
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+poetry config repositories.testpypi https://test.pypi.org/legacy/
+poetry publish -r testpypi
 ```
 
 Download from `TestPyPi`:
@@ -274,5 +269,5 @@ python -m pip install --index-url https://test.pypi.org/simple/ symmetric
 Push to `PyPi`:
 
 ```bash
-twine upload dist/*
+poetry publish
 ```

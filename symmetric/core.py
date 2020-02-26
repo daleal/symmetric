@@ -3,10 +3,9 @@ The main module of symmetric.
 """
 
 import os
-import json
-import flask
 import bisect
 import logging.config
+import flask
 
 import symmetric.endpoints
 
@@ -46,7 +45,7 @@ logging.config.dictConfig({
 app = flask.Flask(__name__)
 
 
-from symmetric.helpers import verb, humanize, log_request
+from symmetric.helpers import verb, humanize, log_request, filter_params
 
 
 class Symmetric:
@@ -66,8 +65,8 @@ class Symmetric:
         "TRACE"
     ]
 
-    def __init__(self, app):
-        self.__app = app
+    def __init__(self, app_object):
+        self.__app = app_object
         self.__endpoints = []
 
     def __call__(self, *args, **kwargs):
@@ -118,7 +117,8 @@ class Symmetric:
                     body = flask.request.get_json()
                     if not body:
                         body = {}
-                    return flask.jsonify(function(**body)), response_code
+                    parameters = filter_params(function, body)
+                    return flask.jsonify(function(**parameters)), response_code
                 except Exception as err:
                     self.__app.logger.error(
                         f"[[symmetric]] exception caught: {err}"

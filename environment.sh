@@ -6,7 +6,7 @@ python3 -m venv .venv
 
 # Upgrade pip and install the dependencies.
 pip install --upgrade pip
-pip install -r requirements.txt
+poetry install
 
 # Deactivate it
 deactivate
