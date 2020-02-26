@@ -3,6 +3,7 @@ A module for every helper of symmetric.
 """
 
 import json
+import inspect
 
 from symmetric.core import app
 
@@ -21,6 +22,20 @@ def humanize(module_name):
     module_name = module_name.replace('_', ' ').replace('-', ' ')
     module_name = module_name.title()
     return module_name
+
+
+def filter_params(function, data):
+    """Filters parameters so that the function recieves only what it needs."""
+    # Get the parameters
+    params = inspect.getfullargspec(function)
+    if params.varkw is not None:
+        # The function recieves kwargs, return the full dictionary
+        return data
+    if not params.args:
+        # The function does not recieve args, return an empty dict
+        return {}
+    # Filter every param whose key is not in the params dictionary
+    return {k: v for k, v in data.items() if k in params.args}
 
 
 def log_request(request, route, function):
