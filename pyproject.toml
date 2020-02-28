@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "symmetric"
-version = "1.6.0"
+version = "1.6.1"
 description = "A simple wrapper over Flask to speed up basic API deployments."
 license = "MIT"
 authors = ["Daniel Leal <dlleal@uc.cl>"]

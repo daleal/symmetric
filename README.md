@@ -10,6 +10,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 
 - Auto logging.
 - Server-side error detection and exception handling.
+- Native support for an authentication token on a per-endpoint basis.
 - Auto-generated documentation for your API.
 
 ## Installing
