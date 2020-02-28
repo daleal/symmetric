@@ -7,8 +7,9 @@ import bisect
 import logging.config
 import flask
 
-import symmetric.endpoints
 import symmetric.constants
+import symmetric.endpoints
+import symmetric.errors
 
 
 # Logging configuration
@@ -50,7 +51,7 @@ app = flask.Flask(__name__)
 
 
 from symmetric.helpers import (verb, humanize, log_request,
-                               filter_params, authenticated)
+                               filter_params, authenticate)
 
 
 class Symmetric:
@@ -130,25 +131,19 @@ class Symmetric:
                         body = {}
 
                     # Check for token authentication
-                    if not authenticated(
-                            body, auth_token, self.__client_token_name,
-                            self.__server_token_name):
-                        # Log incorrect permission levels
-                        self.__app.logger.info(
-                            "[[symmetric]] Not enough permissions to "
-                            "use endpoint."
-                        )
-                        return flask.jsonify({}), 401
-
-                    # Log correct permission levels
-                    self.__app.logger.info(
-                        "[[symmetric]] Enough permissions to use endpoint."
-                    )
+                    authenticate(body, auth_token, self.__client_token_name,
+                                 self.__server_token_name)
 
                     # Filter method parameters
                     parameters = filter_params(
                         function, body, auth_token, self.__client_token_name)
                     return flask.jsonify(function(**parameters)), response_code
+                except symmetric.errors.AuthenticationRequiredError as err:
+                    # Error authenticating
+                    self.__app.logger.error(
+                        f"[[symmetric]] exception caught: {err}"
+                    )
+                    return flask.jsonify({}), 401
                 except Exception as err:
                     self.__app.logger.error(
                         f"[[symmetric]] exception caught: {err}"

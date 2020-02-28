@@ -7,6 +7,7 @@ import json
 import inspect
 
 import symmetric.constants
+import symmetric.errors
 from symmetric.core import app
 
 
@@ -26,21 +27,24 @@ def humanize(module_name):
     return module_name
 
 
-def authenticated(body, auth_token, client_token_name, server_token_name):
+def authenticate(body, auth_token, client_token_name, server_token_name):
     """
-    Returns True if the body contains the necessary token to query the
-    endpoint. If no auth token is required, also returns True.
+    Raises an exception if the body does not include the client token
+    or if it is different to the server token.
     """
     if not auth_token:
         # No auth is required
-        return True
+        return
     # Auth is required from now on
     if client_token_name not in body:
         # The body does not include the desired token
-        return False
+        error = "The request does not include an authentication token."
+        raise symmetric.errors.AuthenticationRequiredError(error)
     # If the token in the body equals the one in the env, return True
     token = os.getenv(server_token_name, symmetric.constants.API_DEFAULT_TOKEN)
-    return body[client_token_name] == token
+    if body[client_token_name] != token:
+        error = "Incorrect authentication token."
+        raise symmetric.errors.AuthenticationRequiredError(error)
 
 
 def filter_params(function, data, has_token, token_key):
