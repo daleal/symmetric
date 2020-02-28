@@ -2,9 +2,12 @@
 A module for every helper of symmetric.
 """
 
+import os
 import json
 import inspect
 
+import symmetric.constants
+import symmetric.errors
 from symmetric.core import app
 
 
@@ -24,8 +27,32 @@ def humanize(module_name):
     return module_name
 
 
-def filter_params(function, data):
+def authenticate(body, auth_token, client_token_name, server_token_name):
+    """
+    Raises an exception if the body does not include the client token
+    or if it is different to the server token.
+    """
+    if not auth_token:
+        # No auth is required
+        return
+    # Auth is required from now on
+    if client_token_name not in body:
+        # The body does not include the desired token
+        error = "The request does not include an authentication token."
+        raise symmetric.errors.AuthenticationRequiredError(error)
+    # If the token in the body equals the one in the env, return True
+    token = os.getenv(server_token_name, symmetric.constants.API_DEFAULT_TOKEN)
+    if body[client_token_name] != token:
+        error = "Incorrect authentication token."
+        raise symmetric.errors.AuthenticationRequiredError(error)
+
+
+def filter_params(function, data, has_token, token_key):
     """Filters parameters so that the function recieves only what it needs."""
+    # Filter token key
+    if has_token:
+        data.pop(token_key, None)
+
     # Get the parameters
     params = inspect.getfullargspec(function)
     if params.varkw is not None:

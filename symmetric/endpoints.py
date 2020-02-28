@@ -11,11 +11,12 @@ class Endpoint:
     Class to encapsulate an endpoint.
     """
 
-    def __init__(self, route, methods, response_code, function):
+    def __init__(self, route, methods, response_code, function, has_token):
         self.__route = route
         self.__methods = methods
         self.__response_code = response_code
         self.__function = function
+        self.__has_token = has_token
 
     def __lt__(self, other):
         return self.route < other.route
@@ -29,9 +30,14 @@ class Endpoint:
         """Generates the documentation of the function."""
         docstring = f"## `{self.__route}`\n\n"
         docstring += f"### Description\n\n"
+        docstring += f"{self.__get_docstring()}\n\n"
+        docstring += f"### Metadata\n\n"
         docstring += f"`HTTP` methods accepted: "
         docstring += f"{', '.join([f'`{x}`' for x in self.__methods])}\n\n"
-        docstring += f"{self.__get_docstring()}\n\n"
+        if self.__has_token:
+            docstring += "Requires an authentication token.\n\n"
+        else:
+            docstring += "Does not require an authentication token.\n\n"
         docstring += f"### Parameters\n\n{self.__get_parameters()}\n"
         return docstring
 
