@@ -2,7 +2,7 @@
 
 ![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
 
-A simple wrapper over **[Flask](https://github.com/pallets/flask)** to speed up basic **[API](https://en.wikipedia.org/wiki/Web_API)** deployments.
+A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
 
 ## Why Symmetric?
 
@@ -39,10 +39,10 @@ The module consists of a main object called `symmetric`, which includes an impor
 ```py
 from symmetric import symmetric
 
-@symmetric.router("/some-route", methods=["get"], response_code=200)
+@symmetric.router("/some-route", methods=["get"], response_code=200, auth_token=False)
 ```
 
-The decorator recieves 3 arguments: the `route` argument (the endpoint of the API to which the decorated function will map), the `methods` argument (a list of the methods accepted to connect to that endpoint, defaults in only `GET` requests) and the `response_code` argument (the response code of the endpoint if everything goes according to the plan. Defaults to `200`).
+The decorator recieves 4 arguments: the `route` argument (the endpoint of the API to which the decorated function will map), the `methods` argument (a list of the methods accepted to connect to that endpoint, defaults in only `GET` requests), the `response_code` argument (the response code of the endpoint if everything goes according to the plan. Defaults to `200`) and the `auth_token` argument (a boolean stating if the endpoint requires authentication using a `symmetric` token. Defaults to `False`).
 
 Now let's imagine that we have the following method:
 
@@ -86,18 +86,6 @@ def another_function(a, b=372):
     return a + b
 ```
 
-### Auto-generating the API documentation
-
-Generating API documentation is simple with `symmetric`. Just run the following command:
-
-```bash
-symmetric docs <module>
-```
-
-This will **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and `HTTP` methods. Seems too simple to be true, right? Go ahead, try it yourself!
-
-You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `--filename` flag.
-
 ### Querying API endpoints
 
 To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `symmetric run module` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
@@ -117,6 +105,59 @@ We got a `69` response! (`48 + 21 = 69`). Of course, you can return dictionaries
 
 With this in mind, you can transform any existing project into a usable API very quickly!
 
+### The `symmetric` token authentication
+
+To speed up your API creation even more, `symmetric` includes native support for a simple token authentication. It works like this:
+
+1. **Set up the token in the server.**
+
+    In the environment where your API is going to run, add an environmental variable named `SYMMETRIC_API_KEY` and set its value to be the _[pre-shared](https://en.wikipedia.org/wiki/Pre-shared_key)_ token. If you don't set the environmental key, the _default_ `SYMMETRIC_API_KEY` value will be `symmetric_token` (in your development environment that's probably fine, but in the production server you should **never** use the default value of the `symmetric` token).
+
+2. **Force one of your endpoints to use an authentication token.**
+
+    Let's say your module has a method like this:
+
+    ```py
+    def secret_function():
+        """Greets the world (secretly)."""
+        return "Hello World in secret!"
+    ```
+
+    Add the `symmetric` router decorator in the following manner:
+
+    ```py
+    @symmetric.router("/secret", auth_token=True)
+    def secret_function():
+        """Greets the world (secretly)."""
+        return "Hello World in secret!"
+    ```
+
+    Now, your endpoint won't respond to any request that is not correctly authenticated.
+
+3. **Query your endpoint.**
+
+    To query your endpoint, the request body must include a key named `symmetric_api_key` with a value to match the one of the environment's `SYMMETRIC_API_KEY`. So, for instance, if you are using the default `SYMMETRIC_API_KEY` value (`symmetric_token`), the request body for the `/secrets` endpoint should be:
+
+    ```py
+    payload = {
+        "symmetric_api_key": "symmetric_token"
+    }
+    ```
+
+    By sending that payload in the request body as a `json`, the request can access the endpoint correctly.
+
+### Auto-generating the API documentation
+
+Generating API documentation is simple with `symmetric`. Just run the following command:
+
+```bash
+symmetric docs <module>
+```
+
+This will **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and `HTTP` methods. Seems too simple to be true, right? Go ahead, try it yourself!
+
+You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `--filename` flag.
+
 ### The whole example
 
 To sum up, if the original `module.py` file looked like this before `symmetric`:
@@ -133,6 +174,11 @@ def another_function(a, b=372):
     that operation.
     """
     return a + b
+
+
+def secret_function():
+    """Greets the world (secretly)."""
+    return "Hello World in secret!"
 ```
 
 The complete final `module.py` file with `symmetric` should look like this:
@@ -154,9 +200,15 @@ def another_function(a, b=372):
     that operation.
     """
     return a + b
+
+
+@symmetric.router("/secret", auth_token=True)
+def secret_function():
+    """Greets the world (secretly)."""
+    return "Hello World in secret!"
 ```
 
-To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/add`. Here is a simple file to get you started querying your API:
+To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample`, `http://127.0.0.1:5000/add` and `http://127.0.0.1:5000/secret`. Here is a simple file to get you started querying your API:
 
 ```py
 import requests
@@ -176,24 +228,39 @@ def call_add():
     return response.json()
 
 
+def call_secret():
+    payload = {
+        "symmetric_api_key": "symmetric_token"
+    }
+    response = requests.get("http://127.0.0.1:5000/secret", json=payload)
+    return response.text
+
+
 if __name__ == '__main__':
     print(call_sample())
     print(call_add())
+    print(call_secret())
 ```
 
 Running `symmetric docs module` would result in a file `documentation.md` being created with the following content:
 
-``````md
+``````pandoc
 # Module API Documentation
+
+Endpoints that require an authentication token should send it in a key named `symmetric_api_key` inside the request body.
 
 ## `/add`
 
 ### Description
 
-`HTTP` methods accepted: `GET`
-
 Adds :a and :b and returns the result of
 that operation.
+
+### Metadata
+
+`HTTP` methods accepted: `GET`
+
+Does not require an authentication token.
 
 ### Parameters
 
@@ -208,15 +275,40 @@ that operation.
 
 ### Description
 
+Greets the world.
+
+### Metadata
+
 `HTTP` methods accepted: `GET`
 
-Greets the world.
+Does not require an authentication token.
+
+### Parameters
+
+No required parameters.
+
+## `/secret`
+
+### Description
+
+Greets the world (secretly).
+
+### Metadata
+
+`HTTP` methods accepted: `GET`
+
+Requires an authentication token.
 
 ### Parameters
 
 No required parameters.
 
 ``````
+
+## Logging
+
+By default, the logs in the server will be written into the `stdout` and into a file named `symmetric.log`. You can change the name of the file by specifying the `LOG_FILE` environmental variable, if you want to.
+
 
 ## Developing
 
