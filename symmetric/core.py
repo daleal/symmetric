@@ -8,6 +8,7 @@ import logging.config
 import flask
 
 import symmetric.endpoints
+import symmetric.constants
 
 
 # Logging configuration
@@ -30,7 +31,10 @@ logging.config.dictConfig({
         },
         "file": {
             "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE", default="module.log"),
+            "filename": os.getenv(
+                "LOG_FILE",
+                default=symmetric.constants.LOG_FILE_NAME
+            ),
             "formatter": "file"
         }
     },
@@ -45,7 +49,8 @@ logging.config.dictConfig({
 app = flask.Flask(__name__)
 
 
-from symmetric.helpers import verb, humanize, log_request, filter_params
+from symmetric.helpers import (verb, humanize, log_request,
+                               filter_params, authenticated)
 
 
 class Symmetric:
@@ -68,6 +73,8 @@ class Symmetric:
     def __init__(self, app_object):
         self.__app = app_object
         self.__endpoints = []
+        self.__server_token_name = symmetric.constants.API_SERVER_TOKEN_NAME
+        self.__client_token_name = symmetric.constants.API_CLIENT_TOKEN_NAME
 
     def __call__(self, *args, **kwargs):
         """
@@ -76,11 +83,13 @@ class Symmetric:
         """
         return self.__app.__call__(*args, **kwargs)
 
-    def router(self, route, methods=["get"], response_code=200):
+    def router(self, route, methods=["get"], response_code=200,
+               auth_token=False):
         """
-        Decorator modifier. Recieves a route string, a list of HTTP methods and
-        a response code. If the route does not start with '/', it gets added.
-        HTTP methods are also filtered. Returns the final decorated function.
+        Decorator modifier. Recieves a route string, a list of HTTP methods, a
+        response code and a boolean indicating whether or not to authenticate.
+        If the route does not start with '/', it gets added. HTTP methods are
+        also filtered. Returns the final decorated function.
         """
         route = f"/{route}" if route[0] != "/" else route
         methods = [
@@ -96,7 +105,7 @@ class Symmetric:
             # Save endpoint
             self.__save_endpoint(
                 symmetric.endpoints.Endpoint(
-                    route, methods, response_code, function
+                    route, methods, response_code, function, auth_token
                 )
             )
 
@@ -114,10 +123,31 @@ class Symmetric:
                 """
                 try:
                     log_request(flask.request, route, function)
+
+                    # Get the body
                     body = flask.request.get_json()
                     if not body:
                         body = {}
-                    parameters = filter_params(function, body)
+
+                    # Check for token authentication
+                    if not authenticated(
+                            body, auth_token, self.__client_token_name,
+                            self.__server_token_name):
+                        # Log incorrect permission levels
+                        self.__app.logger.info(
+                            "[[symmetric]] Not enough permissions to "
+                            "use endpoint."
+                        )
+                        return flask.jsonify({}), 401
+
+                    # Log correct permission levels
+                    self.__app.logger.info(
+                        "[[symmetric]] Enough permissions to use endpoint."
+                    )
+
+                    # Filter method parameters
+                    parameters = filter_params(
+                        function, body, auth_token, self.__client_token_name)
                     return flask.jsonify(function(**parameters)), response_code
                 except Exception as err:
                     self.__app.logger.error(
@@ -136,8 +166,11 @@ class Symmetric:
         Gets the documentation of every endpoint and assembles it into a
         markdown formatted string.
         """
-        raw_docs = [x.generate_documentation() for x in self.__endpoints]
         docs = f"# {humanize(module_name)} API Documentation\n\n"
+        docs += ("Endpoints that require an authentication token should "
+                 f"send it in a key named `{self.__client_token_name}` "
+                 "inside the request body.\n\n")
+        raw_docs = [x.generate_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)
         return docs
 

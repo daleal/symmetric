@@ -2,9 +2,11 @@
 A module for every helper of symmetric.
 """
 
+import os
 import json
 import inspect
 
+import symmetric.constants
 from symmetric.core import app
 
 
@@ -24,8 +26,29 @@ def humanize(module_name):
     return module_name
 
 
-def filter_params(function, data):
+def authenticated(body, auth_token, client_token_name, server_token_name):
+    """
+    Returns True if the body contains the necessary token to query the
+    endpoint. If no auth token is required, also returns True.
+    """
+    if not auth_token:
+        # No auth is required
+        return True
+    # Auth is required from now on
+    if client_token_name not in body:
+        # The body does not include the desired token
+        return False
+    # If the token in the body equals the one in the env, return True
+    token = os.getenv(server_token_name, symmetric.constants.API_DEFAULT_TOKEN)
+    return body[client_token_name] == token
+
+
+def filter_params(function, data, has_token, token_key):
     """Filters parameters so that the function recieves only what it needs."""
+    # Filter token key
+    if has_token:
+        data.pop(token_key, None)
+
     # Get the parameters
     params = inspect.getfullargspec(function)
     if params.varkw is not None:
