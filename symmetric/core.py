@@ -3,55 +3,16 @@ The main module of symmetric.
 """
 
 import os
+import sys
+import json
 import bisect
 import logging.config
 import flask
 
 import symmetric.constants
 import symmetric.endpoints
+import symmetric.helpers
 import symmetric.errors
-
-
-# Logging configuration
-logging.config.dictConfig({
-    "version": 1,
-    "formatters": {
-        "console": {
-            "format": "[%(asctime)s] [%(levelname)s] %(module)s: %(message)s"
-        },
-        "file": {
-            "format": ("[%(asctime)s] [%(levelname)s] %(pathname)s - "
-                       "line %(lineno)d: \n%(message)s\n")
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr",
-            "formatter": "console"
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": os.getenv(
-                "LOG_FILE",
-                default=symmetric.constants.LOG_FILE_NAME
-            ),
-            "formatter": "file"
-        }
-    },
-    "root": {
-        "level": "INFO",
-        "handlers": ["console", "file"]
-    }
-})
-
-
-# Create flask app object
-app = flask.Flask(__name__)
-
-
-from symmetric.helpers import (verb, humanize, log_request,
-                               filter_params, authenticate)
 
 
 class Symmetric:
@@ -92,10 +53,17 @@ class Symmetric:
         If the route does not start with '/', it gets added. HTTP methods are
         also filtered. Returns the final decorated function.
         """
-        route = f"/{route}" if route[0] != "/" else route
+        try:
+            symmetric.helpers.parse_url(route)
+        except symmetric.errors.IncorrectURLFormatError as err:
+            self.__app.logger.error(
+                f"[[symmetric]] IncorrectURLFormatError: {err}"
+            )
+            sys.exit(1)
+
         methods = [
-            verb(x) for x in methods
-            if verb(x) in Symmetric.__allowed_methods
+            symmetric.helpers.verb(x) for x in methods
+            if symmetric.helpers.verb(x) in Symmetric.__allowed_methods
         ]
 
         def decorator(function):
@@ -103,12 +71,17 @@ class Symmetric:
             Function decorator. Recieves the main function and wraps it as a
             flask endpoint. Returns the wrapped function.
             """
-            # Save endpoint
-            self.__save_endpoint(
-                symmetric.endpoints.Endpoint(
-                    route, methods, response_code, function, auth_token
+            try:
+                self.__save_endpoint(
+                    symmetric.endpoints.Endpoint(
+                        route, methods, response_code, function, auth_token
+                    )
                 )
-            )
+            except symmetric.errors.DuplicatedURLError as err:
+                self.__app.logger.error(
+                    f"[[symmetric]] DuplicatedURLError: {err}"
+                )
+                sys.exit(1)
 
             # Decorate the wrapper
             @self.__app.route(
@@ -123,7 +96,7 @@ class Symmetric:
                 jsonified with a response code.
                 """
                 try:
-                    log_request(flask.request, route, function)
+                    self.__log_request(flask.request, route, function)
 
                     # Get the body
                     body = flask.request.get_json()
@@ -131,11 +104,12 @@ class Symmetric:
                         body = {}
 
                     # Check for token authentication
-                    authenticate(body, auth_token, self.__client_token_name,
-                                 self.__server_token_name)
+                    symmetric.helpers.authenticate(
+                        body, auth_token, self.__client_token_name,
+                        self.__server_token_name)
 
                     # Filter method parameters
-                    parameters = filter_params(
+                    parameters = symmetric.helpers.filter_params(
                         function, body, auth_token, self.__client_token_name)
                     return flask.jsonify(function(**parameters)), response_code
                 except symmetric.errors.AuthenticationRequiredError as err:
@@ -161,7 +135,8 @@ class Symmetric:
         Gets the documentation of every endpoint and assembles it into a
         markdown formatted string.
         """
-        docs = f"# {humanize(module_name)} API Documentation\n\n"
+        docs = f"# {symmetric.helpers.humanize(module_name)} "
+        docs += "API Documentation\n\n"
         docs += ("Endpoints that require an authentication token should "
                  f"send it in a key named `{self.__client_token_name}` "
                  "inside the request body.\n\n")
@@ -171,8 +146,71 @@ class Symmetric:
 
     def __save_endpoint(self, endpoint):
         """Saves an endpoint object and sorts the endpoints list."""
+        if endpoint in self.__endpoints:
+            message = f"Endpoint '{endpoint.route}' was defined twice."
+            raise symmetric.errors.DuplicatedURLError(message)
         bisect.insort(self.__endpoints, endpoint)
+
+    def __log_request(self, request, route, function):
+        """
+        Recieves a request object, a route string and a function and
+        logs the request event. It also logs the json body of the request.
+        """
+        self.__app.logger.info(
+            f"{request.method} request to '{route}' endpoint "
+            f"('{function.__name__}' function)."
+        )
+        body = request.get_json()
+        if body:
+            self.__log_body(body)
+
+    def __log_body(self, body):
+        """Given a json request body, logs it."""
+        self.__app.logger.info("Request Body:\n" + json.dumps(
+            body,
+            indent=2,
+            sort_keys=False,
+            ensure_ascii=False
+        ))
+
+
+# Create flask app object
+app = flask.Flask(__name__)
 
 
 # Create symmetric object
 sym = Symmetric(app)
+
+
+# Logging configuration
+logging.config.dictConfig({
+    "version": 1,
+    "formatters": {
+        "console": {
+            "format": "[%(asctime)s] [%(levelname)s] %(module)s: %(message)s"
+        },
+        "file": {
+            "format": ("[%(asctime)s] [%(levelname)s] %(pathname)s - "
+                       "line %(lineno)d: \n%(message)s\n")
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr",
+            "formatter": "console"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": os.getenv(
+                "LOG_FILE",
+                default=symmetric.constants.LOG_FILE_NAME
+            ),
+            "formatter": "file"
+        }
+    },
+    "root": {
+        "level": "INFO",
+        "handlers": ["console", "file"]
+    }
+})

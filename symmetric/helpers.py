@@ -2,13 +2,12 @@
 A module for every helper of symmetric.
 """
 
+import re
 import os
-import json
 import inspect
 
 import symmetric.constants
 import symmetric.errors
-from symmetric.core import app
 
 
 def verb(dirty):
@@ -25,6 +24,18 @@ def humanize(module_name):
     module_name = module_name.replace('_', ' ').replace('-', ' ')
     module_name = module_name.title()
     return module_name
+
+
+def parse_url(url):
+    """
+    If :url does not match the expected url pattern,
+    raises IncorrectURLFormatError.
+    """
+    if re.fullmatch(symmetric.constants.URL_PATTERN, url) is None:
+        message = (f"Your URL '{url}' does not match with the symmetric "
+                   "URL guidelines. Refer to the documentation at "
+                   "https://github.com/daleal/symmetric for more information.")
+        raise symmetric.errors.IncorrectURLFormatError(message)
 
 
 def authenticate(body, auth_token, client_token_name, server_token_name):
@@ -63,27 +74,3 @@ def filter_params(function, data, has_token, token_key):
         return {}
     # Filter every param whose key is not in the params dictionary
     return {k: v for k, v in data.items() if k in params.args}
-
-
-def log_request(request, route, function):
-    """
-    Recieves a request object, a route string and a function and
-    logs the request event. It also logs the json body of the request.
-    """
-    app.logger.info(
-        f"{request.method} request to '{route}' endpoint "
-        f"('{function.__name__}' function)."
-    )
-    body = request.get_json()
-    if body:
-        log_body(body)
-
-
-def log_body(body):
-    """Given a json request body, logs it."""
-    app.logger.info("Request Body:\n" + json.dumps(
-        body,
-        indent=2,
-        sort_keys=False,
-        ensure_ascii=False
-    ))

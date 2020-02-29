@@ -1,8 +1,10 @@
 # Symmetric
 
-![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998)
 
 A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
+
+![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
 
 ## Why Symmetric?
 
@@ -10,6 +12,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 
 - Auto logging.
 - Server-side error detection and exception handling.
+- Native support for an authentication token on a per-endpoint basis.
 - Auto-generated documentation for your API.
 
 ## Installing
@@ -309,6 +312,38 @@ No required parameters.
 
 By default, the logs in the server will be written into the `stdout` and into a file named `symmetric.log`. You can change the name of the file by specifying the `LOG_FILE` environmental variable, if you want to.
 
+## `URL` rules
+
+There are some rules regarding the correct `URL`s that can be used. Failing to follow the `symmetric` `URL` rules will result in the API not being run and an error being thrown and logged. To follow the rules, an `URL`:
+
+1. **Can't** be defined twice.
+2. **Can't** have repetitions of `/`, `-` or `_`.
+3. **Can't** have concatenations of `/` with `-` or of `_` with `-`.
+4. **Can't** include characters other than letters (uppercase and/or lowercase), `/`, `-` and `_`.
+5. **Can't** end with a `/`, a `-` or a `_`. The **only** exception of this rule is when the `URL` is just `/`, in which case, it **can** end with `/`.
+6. **Must** start with a `/`.
+
+Here are some examples.
+
+### Correct `URL` patterns
+
+- `/`
+- `/symmetric`
+- `/hi/hello`
+- `/hello-world/basic_syntax`
+- `/_element/BIGelement`
+
+### Incorrect `URL` patterns
+
+- `/hi//hello`
+- `element`
+- `/another-element/`
+- `/bad-_composition`
+- `/-worse`
+- `/element__two`
+- `/element2`
+- `/oof-number-one-`
+- `/oof_number_two_`
 
 ## Developing
 
