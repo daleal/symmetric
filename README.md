@@ -1,8 +1,10 @@
 # Symmetric
 
-![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998)
 
 A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
+
+![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
 
 ## Why Symmetric?
 
