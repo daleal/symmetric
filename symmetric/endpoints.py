@@ -21,6 +21,9 @@ class Endpoint:
     def __lt__(self, other):
         return self.route < other.route
 
+    def __eq__(self, other):
+        return self.route == other.route
+
     @property
     def route(self):
         """Returns the route of the endpoint."""
