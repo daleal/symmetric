@@ -4,8 +4,8 @@
 
 A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
 
-![](https://github.com/daleal/symmetric/workflows/testing/badge.svg)
-![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/daleal/symmetric/tests?label=tests&logo=github&style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/daleal/symmetric/linters?label=linters&logo=github&style=for-the-badge)
 
 ## Why Symmetric?
 
