@@ -17,14 +17,14 @@ class AuthenticationRequiredError(Exception):
     """
 
 
-class IncorrectURLFormatError(Exception):
+class IncorrectRouteFormatError(Exception):
     """
-    Exception for when an endpoint URL is incorrectly defined (it does
-    not follow the expected URL format).
+    Exception for when an endpoint route is incorrectly defined (it does
+    not follow the expected route format).
     """
 
 
-class DuplicatedURLError(Exception):
+class DuplicatedRouteError(Exception):
     """
-    Exception for when an endpoint URL is already in the added endpoints.
+    Exception for when an endpoint route is already in the added endpoints.
     """

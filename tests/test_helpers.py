@@ -10,17 +10,17 @@ import symmetric.helpers
 import symmetric.constants
 
 
-class PathParserTestCase(unittest.TestCase):
-    """Tests the path parser helper method."""
+class RouteParserTestCase(unittest.TestCase):
+    """Tests the route parser helper method."""
     def setUp(self):
-        self.correct_paths = [
+        self.correct_routes = [
             "/",
             "/symmetric",
             "/hi/hello",
             "/hello-world/basic_syntax",
             "/_element/BIGelement"
         ]
-        self.incorrect_paths = [
+        self.incorrect_routes = [
             "/hi//hello",
             "element",
             "/another-element/",
@@ -32,19 +32,21 @@ class PathParserTestCase(unittest.TestCase):
             "/oof_number_two_"
         ]
 
-    def test_correct_paths(self):
-        """Tests that correct paths don't raise errors."""
-        for iii in range(len(self.correct_paths)):
+    def test_correct_routes(self):
+        """Tests that correct routes don't raise errors."""
+        for iii in range(len(self.correct_routes)):
             with self.subTest(run=iii):
-                symmetric.helpers.parse_url(self.correct_paths[iii])
+                symmetric.helpers.parse_route(self.correct_routes[iii])
 
-    def test_incorrect_paths(self):
-        """Tests that incorrect paths raise a IncorrectURLFormatError error."""
-        for iii in range(len(self.incorrect_paths)):
+    def test_incorrect_routes(self):
+        """
+        Tests that incorrect routes raise a IncorrectRouteFormatError error.
+        """
+        for iii in range(len(self.incorrect_routes)):
             with self.subTest(run=iii):
                 with self.assertRaises(
-                        symmetric.errors.IncorrectURLFormatError):
-                    symmetric.helpers.parse_url(self.incorrect_paths[iii])
+                        symmetric.errors.IncorrectRouteFormatError):
+                    symmetric.helpers.parse_route(self.incorrect_routes[iii])
 
 
 class AuthenticationTestCase(unittest.TestCase):

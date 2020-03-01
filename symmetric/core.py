@@ -2,13 +2,12 @@
 The main module of symmetric.
 """
 
-import os
 import sys
 import json
 import bisect
-import logging.config
 import flask
 
+import symmetric.logging
 import symmetric.constants
 import symmetric.endpoints
 import symmetric.helpers
@@ -54,10 +53,10 @@ class Symmetric:
         also filtered. Returns the final decorated function.
         """
         try:
-            symmetric.helpers.parse_url(route)
-        except symmetric.errors.IncorrectURLFormatError as err:
+            symmetric.helpers.parse_route(route)
+        except symmetric.errors.IncorrectRouteFormatError as err:
             self.__app.logger.error(
-                f"[[symmetric]] IncorrectURLFormatError: {err}"
+                f"[[symmetric]] IncorrectRouteFormatError: {err}"
             )
             sys.exit(1)
 
@@ -77,9 +76,9 @@ class Symmetric:
                         route, methods, response_code, function, auth_token
                     )
                 )
-            except symmetric.errors.DuplicatedURLError as err:
+            except symmetric.errors.DuplicatedRouteError as err:
                 self.__app.logger.error(
-                    f"[[symmetric]] DuplicatedURLError: {err}"
+                    f"[[symmetric]] DuplicatedRouteError: {err}"
                 )
                 sys.exit(1)
 
@@ -148,7 +147,7 @@ class Symmetric:
         """Saves an endpoint object and sorts the endpoints list."""
         if endpoint in self.__endpoints:
             message = f"Endpoint '{endpoint.route}' was defined twice."
-            raise symmetric.errors.DuplicatedURLError(message)
+            raise symmetric.errors.DuplicatedRouteError(message)
         bisect.insort(self.__endpoints, endpoint)
 
     def __log_request(self, request, route, function):
@@ -180,37 +179,3 @@ app = flask.Flask(__name__)
 
 # Create symmetric object
 sym = Symmetric(app)
-
-
-# Logging configuration
-logging.config.dictConfig({
-    "version": 1,
-    "formatters": {
-        "console": {
-            "format": "[%(asctime)s] [%(levelname)s] %(module)s: %(message)s"
-        },
-        "file": {
-            "format": ("[%(asctime)s] [%(levelname)s] %(pathname)s - "
-                       "line %(lineno)d: \n%(message)s\n")
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr",
-            "formatter": "console"
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": os.getenv(
-                "LOG_FILE",
-                default=symmetric.constants.LOG_FILE_NAME
-            ),
-            "formatter": "file"
-        }
-    },
-    "root": {
-        "level": "INFO",
-        "handlers": ["console", "file"]
-    }
-})

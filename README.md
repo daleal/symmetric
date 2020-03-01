@@ -313,20 +313,20 @@ No required parameters.
 
 By default, the logs in the server will be written into the `stdout` and into a file named `symmetric.log`. You can change the name of the file by specifying the `LOG_FILE` environmental variable, if you want to.
 
-## `URL` rules
+## Route rules
 
-There are some rules regarding the correct `URL`s that can be used. Failing to follow the `symmetric` `URL` rules will result in the API not being run and an error being thrown and logged. To follow the rules, an `URL`:
+There are some rules regarding the correct routes that can be used. Failing to follow the `symmetric` route rules will result in the API not being run and an error being thrown and logged. To follow the rules, a route:
 
 1. **Can't** be defined twice.
 2. **Can't** have repetitions of `/`, `-` or `_`.
 3. **Can't** have concatenations of `/` with `-` or of `_` with `-`.
 4. **Can't** include characters other than letters (uppercase and/or lowercase), `/`, `-` and `_`.
-5. **Can't** end with a `/`, a `-` or a `_`. The **only** exception of this rule is when the `URL` is just `/`, in which case, it **can** end with `/`.
+5. **Can't** end with a `/`, a `-` or a `_`. The **only** exception of this rule is when the route is just `/`, in which case, it **can** end with `/`.
 6. **Must** start with a `/`.
 
 Here are some examples.
 
-### Correct `URL` patterns
+### Correct route patterns
 
 - `/`
 - `/symmetric`
@@ -334,7 +334,7 @@ Here are some examples.
 - `/hello-world/basic_syntax`
 - `/_element/BIGelement`
 
-### Incorrect `URL` patterns
+### Incorrect route patterns
 
 - `/hi//hello`
 - `element`
@@ -364,16 +364,22 @@ Recreate environment:
 . .venv/bin/activate
 ```
 
-Build the project:
-
-```bash
-poetry build
-```
-
 Test install:
 
 ```bash
 poetry install  # will also install the symmetric CLI
+```
+
+Run the tests:
+
+```bash
+python -m unittest
+```
+
+Build the project:
+
+```bash
+poetry build
 ```
 
 Push to `TestPyPi`:

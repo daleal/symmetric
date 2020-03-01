@@ -1,5 +1,5 @@
 """
-A module to hold some utilities.
+A module to hold some CLI utilities.
 """
 
 import os
