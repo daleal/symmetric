@@ -1,6 +1,7 @@
 # Symmetric
 
-![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff)
+![PyPI - Version](https://img.shields.io/pypi/v/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff&label=version)
 
 A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
 
@@ -374,34 +375,4 @@ Run the tests:
 
 ```bash
 python -m unittest
-```
-
-Build the project:
-
-```bash
-poetry build
-```
-
-Push to `TestPyPi`:
-
-```bash
-poetry config repositories.testpypi https://test.pypi.org/legacy/
-poetry publish -r testpypi
-```
-
-Download from `TestPyPi`:
-
-```bash
-deactivate
-rm -rf .testing-venv
-python3 -m venv .testing-venv
-. .testing-venv/bin/activate
-pip install click
-python -m pip install --index-url https://test.pypi.org/simple/ symmetric
-```
-
-Push to `PyPi`:
-
-```bash
-poetry publish
 ```

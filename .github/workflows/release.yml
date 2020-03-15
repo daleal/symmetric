@@ -1,0 +1,29 @@
+name: release
+
+on:
+  push:
+    branches:
+      - stable
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: Install Poetry
+        uses: dschep/install-poetry-action@v1.2
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Build the package
+        run: poetry build
+
+      - name: Push the package
+        run: poetry publish -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }}
