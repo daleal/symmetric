@@ -23,7 +23,16 @@ def dispatcher():
                 args.module, args.server, args.port, args.debug
             )
         elif args.action == "docs":
-            symmetric.cli_utils.document_api(args.module, args.filename)
+            if args.markdown:
+                symmetric.cli_utils.document_api_markdown(
+                    args.module,
+                    args.filename if args.filename else "documentation.md"
+                )
+            else:
+                symmetric.cli_utils.document_openapi(
+                    args.module,
+                    args.filename if args.filename else "openapi.json"
+                )
     except AttributeError:
         print("An argument is required for the symmetric command.")
         parser.print_help()
@@ -108,8 +117,18 @@ def generate_documentation_subparser(subparsers):
     documentation_parser.add_argument(
         "-f", "--filename",
         dest="filename",
-        default="documentation.md",
+        default="",
         help="Name of the file in where to write the documentation."
+    )
+
+    # Markdown
+    documentation_parser.add_argument(
+        "-m", "--markdown",
+        dest="markdown",
+        action='store_const',
+        default=False,  # markdown is set to False by default
+        const=True,     # if the flag is used, sets markdown to True
+        help="Generate simpler, human-readable Markdown documentation."
     )
 
 

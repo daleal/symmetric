@@ -5,6 +5,7 @@ The main module of symmetric.
 import sys
 import json
 import bisect
+import functools
 import flask
 
 import symmetric.logging
@@ -22,12 +23,13 @@ class Symmetric:
 
     # Define allowed HTTP methods
     __allowed_methods = [
-        "OPTIONS",
         "GET",
-        "HEAD",
-        "POST",
         "PUT",
+        "POST",
         "DELETE",
+        "OPTIONS",
+        "HEAD",
+        "PATCH",
         "TRACE"
     ]
 
@@ -44,7 +46,7 @@ class Symmetric:
         """
         return self.__app.__call__(*args, **kwargs)
 
-    def router(self, route, methods=["get"], response_code=200,
+    def router(self, route, methods=["post"], response_code=200,
                auth_token=False):
         """
         Decorator modifier. Recieves a route string, a list of HTTP methods, a
@@ -129,7 +131,7 @@ class Symmetric:
         """Executes the main run function of the Flask object."""
         self.__app.run(*args, **kwargs)
 
-    def generate_documentation(self, module_name):
+    def generate_markdown_documentation(self, module_name):
         """
         Gets the documentation of every endpoint and assembles it into a
         markdown formatted string.
@@ -139,9 +141,28 @@ class Symmetric:
         docs += ("Endpoints that require an authentication token should "
                  f"send it in a key named `{self.__client_token_name}` "
                  "inside the request body.\n\n")
-        raw_docs = [x.generate_documentation() for x in self.__endpoints]
+        raw_docs = [
+            x.generate_markdown_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)
         return docs
+
+    def openapi_documentation(self, module_name):
+        """
+        Gets the OpenAPI spec of every endpoint and assembles it into a
+        JSON formatted string.
+        """
+        return {
+            "openapi": "3.0.3",
+            "info": {
+                "title": f"{symmetric.helpers.humanize(module_name)} API",
+                "version": "0.0.1"  # Arbitrary
+            },
+            "paths": functools.reduce(
+                lambda x, y: {**x, **y},
+                [x.openapi_documentation() for x in self.__endpoints],
+                {}
+            )
+        }
 
     def __save_endpoint(self, endpoint):
         """Saves an endpoint object and sorts the endpoints list."""
