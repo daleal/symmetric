@@ -2,13 +2,13 @@
 The main module of symmetric.
 """
 
-import os
 import sys
 import json
 import bisect
-import logging.config
+import functools
 import flask
 
+import symmetric.logging
 import symmetric.constants
 import symmetric.endpoints
 import symmetric.helpers
@@ -23,12 +23,13 @@ class Symmetric:
 
     # Define allowed HTTP methods
     __allowed_methods = [
-        "OPTIONS",
         "GET",
-        "HEAD",
-        "POST",
         "PUT",
+        "POST",
         "DELETE",
+        "OPTIONS",
+        "HEAD",
+        "PATCH",
         "TRACE"
     ]
 
@@ -45,7 +46,7 @@ class Symmetric:
         """
         return self.__app.__call__(*args, **kwargs)
 
-    def router(self, route, methods=["get"], response_code=200,
+    def router(self, route, methods=["post"], response_code=200,
                auth_token=False):
         """
         Decorator modifier. Recieves a route string, a list of HTTP methods, a
@@ -54,10 +55,10 @@ class Symmetric:
         also filtered. Returns the final decorated function.
         """
         try:
-            symmetric.helpers.parse_url(route)
-        except symmetric.errors.IncorrectURLFormatError as err:
+            symmetric.helpers.parse_route(route)
+        except symmetric.errors.IncorrectRouteFormatError as err:
             self.__app.logger.error(
-                f"[[symmetric]] IncorrectURLFormatError: {err}"
+                f"[[symmetric]] IncorrectRouteFormatError: {err}"
             )
             sys.exit(1)
 
@@ -77,9 +78,9 @@ class Symmetric:
                         route, methods, response_code, function, auth_token
                     )
                 )
-            except symmetric.errors.DuplicatedURLError as err:
+            except symmetric.errors.DuplicatedRouteError as err:
                 self.__app.logger.error(
-                    f"[[symmetric]] DuplicatedURLError: {err}"
+                    f"[[symmetric]] DuplicatedRouteError: {err}"
                 )
                 sys.exit(1)
 
@@ -130,7 +131,7 @@ class Symmetric:
         """Executes the main run function of the Flask object."""
         self.__app.run(*args, **kwargs)
 
-    def generate_documentation(self, module_name):
+    def generate_markdown_documentation(self, module_name):
         """
         Gets the documentation of every endpoint and assembles it into a
         markdown formatted string.
@@ -140,15 +141,34 @@ class Symmetric:
         docs += ("Endpoints that require an authentication token should "
                  f"send it in a key named `{self.__client_token_name}` "
                  "inside the request body.\n\n")
-        raw_docs = [x.generate_documentation() for x in self.__endpoints]
+        raw_docs = [
+            x.generate_markdown_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)
         return docs
+
+    def openapi_documentation(self, module_name):
+        """
+        Gets the OpenAPI spec of every endpoint and assembles it into a
+        JSON formatted string.
+        """
+        return {
+            "openapi": "3.0.3",
+            "info": {
+                "title": f"{symmetric.helpers.humanize(module_name)} API",
+                "version": "0.0.1"  # Arbitrary
+            },
+            "paths": functools.reduce(
+                lambda x, y: {**x, **y},
+                [x.openapi_documentation() for x in self.__endpoints],
+                {}
+            )
+        }
 
     def __save_endpoint(self, endpoint):
         """Saves an endpoint object and sorts the endpoints list."""
         if endpoint in self.__endpoints:
             message = f"Endpoint '{endpoint.route}' was defined twice."
-            raise symmetric.errors.DuplicatedURLError(message)
+            raise symmetric.errors.DuplicatedRouteError(message)
         bisect.insort(self.__endpoints, endpoint)
 
     def __log_request(self, request, route, function):
@@ -180,37 +200,3 @@ app = flask.Flask(__name__)
 
 # Create symmetric object
 sym = Symmetric(app)
-
-
-# Logging configuration
-logging.config.dictConfig({
-    "version": 1,
-    "formatters": {
-        "console": {
-            "format": "[%(asctime)s] [%(levelname)s] %(module)s: %(message)s"
-        },
-        "file": {
-            "format": ("[%(asctime)s] [%(levelname)s] %(pathname)s - "
-                       "line %(lineno)d: \n%(message)s\n")
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr",
-            "formatter": "console"
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": os.getenv(
-                "LOG_FILE",
-                default=symmetric.constants.LOG_FILE_NAME
-            ),
-            "formatter": "file"
-        }
-    },
-    "root": {
-        "level": "INFO",
-        "handlers": ["console", "file"]
-    }
-})

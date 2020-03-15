@@ -1,9 +1,10 @@
 """
-A module to hold some utilities.
+A module to hold some CLI utilities.
 """
 
 import os
 import sys
+import json
 import traceback
 import importlib
 
@@ -19,14 +20,24 @@ def start_server(module, server, port, debug):
     symmetric_object.run(host=server, port=port, debug=debug)
 
 
-def document_api(module, filename):
+def document_api_markdown(module, filename):
     """
-    Gets the symmetric object and then calls the documentation method.
+    Gets the symmetric object and then calls the markdown documentation method.
     """
     symmetric_object = get_symmetric_object(module, True)
-    docs = symmetric_object.generate_documentation(module)
+    docs = symmetric_object.generate_markdown_documentation(module)
     with open(filename, "w") as docs_file:
         docs_file.write(docs)
+
+
+def document_openapi(module, filename):
+    """
+    Gets the symmetric object and then calls the OpenAPI Specification method.
+    """
+    symmetric_object = get_symmetric_object(module, True)
+    docs = symmetric_object.openapi_documentation(module)
+    with open(filename, "w") as docs_file:
+        json.dump(docs, docs_file, indent=2)
 
 
 def get_symmetric_object(module_name, debug):

@@ -18,6 +18,24 @@ def verb(dirty):
     return dirty.strip().upper()
 
 
+def type_to_string(type_obj):
+    """Given a python type, return its JSON schema string counterpart."""
+    type_str = type_obj.__name__
+    if type_str == "str":
+        return "string"
+    if type_str == "float":
+        return "number"
+    if type_str == "int":
+        return "integer"
+    if type_str == "bool":
+        return "boolean"
+    if type_str == "NoneType":
+        return "null"
+    if type_str == "list":
+        return "array"
+    return "object"
+
+
 def humanize(module_name):
     """Transforms a module name into a pretty human-likable string."""
     module_name = module_name.lower()
@@ -26,16 +44,16 @@ def humanize(module_name):
     return module_name
 
 
-def parse_url(url):
+def parse_route(route):
     """
-    If :url does not match the expected url pattern,
-    raises IncorrectURLFormatError.
+    If :route does not match the expected route pattern,
+    raises IncorrectRouteFormatError.
     """
-    if re.fullmatch(symmetric.constants.URL_PATTERN, url) is None:
-        message = (f"Your URL '{url}' does not match with the symmetric "
-                   "URL guidelines. Refer to the documentation at "
+    if re.fullmatch(symmetric.constants.ROUTE_PATTERN, route) is None:
+        message = (f"Your route '{route}' does not match with the symmetric "
+                   "route guidelines. Refer to the documentation at "
                    "https://github.com/daleal/symmetric for more information.")
-        raise symmetric.errors.IncorrectURLFormatError(message)
+        raise symmetric.errors.IncorrectRouteFormatError(message)
 
 
 def authenticate(body, auth_token, client_token_name, server_token_name):

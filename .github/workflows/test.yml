@@ -1,0 +1,31 @@
+name: tests
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: Install Poetry
+        uses: dschep/install-poetry-action@v1.2
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run our test suite
+        run: poetry run python -m unittest

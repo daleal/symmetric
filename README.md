@@ -1,10 +1,12 @@
 # Symmetric
 
-![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998)
+![PyPI - Version](https://img.shields.io/pypi/v/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff&label=version)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff)
 
 A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
 
-![](https://github.com/daleal/symmetric/workflows/linters/badge.svg)
+![Tests Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/tests?label=tests&logo=github&style=for-the-badge)
+![Linters Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/linters?label=linters&logo=github&style=for-the-badge)
 
 ## Why Symmetric?
 
@@ -13,7 +15,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 - Auto logging.
 - Server-side error detection and exception handling.
 - Native support for an authentication token on a per-endpoint basis.
-- Auto-generated documentation for your API.
+- Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation for your API.
 
 ## Installing
 
@@ -42,10 +44,10 @@ The module consists of a main object called `symmetric`, which includes an impor
 ```py
 from symmetric import symmetric
 
-@symmetric.router("/some-route", methods=["get"], response_code=200, auth_token=False)
+@symmetric.router("/some-route", methods=["post"], response_code=200, auth_token=False)
 ```
 
-The decorator recieves 4 arguments: the `route` argument (the endpoint of the API to which the decorated function will map), the `methods` argument (a list of the methods accepted to connect to that endpoint, defaults in only `GET` requests), the `response_code` argument (the response code of the endpoint if everything goes according to the plan. Defaults to `200`) and the `auth_token` argument (a boolean stating if the endpoint requires authentication using a `symmetric` token. Defaults to `False`).
+The decorator recieves 4 arguments: the `route` argument (the endpoint of the API to which the decorated function will map), the `methods` argument (a list of the methods accepted to connect to that endpoint, defaults in only `POST` requests), the `response_code` argument (the response code of the endpoint if everything goes according to the plan. Defaults to `200`) and the `auth_token` argument (a boolean stating if the endpoint requires authentication using a `symmetric` token. Defaults to `False`).
 
 Now let's imagine that we have the following method:
 
@@ -58,7 +60,7 @@ def some_function():
 To transform that method into an API endpoint, all you need to do is add one line:
 
 ```py
-@symmetric.router("/sample")
+@symmetric.router("/sample", methods=["get"])
 def some_function():
     """Greets the world."""
     return "Hello World!"
@@ -91,7 +93,7 @@ def another_function(a, b=372):
 
 ### Querying API endpoints
 
-To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `symmetric run module` and send a `GET` request to `http://127.0.0.1:5000/add`, now using the `requests` module.
+To give parameters to a function, all we need to do is send a `json` body with the names of the parameters as keys. Let's see how! Run `symmetric run module` and send a `POST` request (the default `HTTP` method) to `http://127.0.0.1:5000/add`, now using the `requests` module.
 
 ```python
 import requests
@@ -100,7 +102,7 @@ payload = {
     "a": 48,
     "b": 21
 }
-response = requests.get("http://127.0.0.1:5000/add", json=payload)
+response = requests.post("http://127.0.0.1:5000/add", json=payload)
 print(response.json())
 ```
 
@@ -157,9 +159,17 @@ Generating API documentation is simple with `symmetric`. Just run the following 
 symmetric docs <module>
 ```
 
-This will **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and `HTTP` methods. Seems too simple to be true, right? Go ahead, try it yourself!
+This will **automagically** generate a `json` file documenting the API with an OpenAPI specification. Seems too simple to be true, right? Go ahead, try it yourself!
 
-You can also specify the name of the documentation file (defaults to `documentation.md`) using the `-f` or the `--filename` flag.
+You can also generate a more simple and human-readable documentation file with the `-m` or the `--markdown` flag.
+
+```bash
+symmetric docs <module> --markdown
+```
+
+This will also **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and more data about that endpoint.
+
+You can also specify the name of the documentation file (defaults to `openapi.json` for the default documentation and to `documentation.md` for the markdown documentation) using the `-f` or the `--filename` flag.
 
 ### The whole example
 
@@ -190,7 +200,7 @@ The complete final `module.py` file with `symmetric` should look like this:
 from symmetric import symmetric
 
 
-@symmetric.router("/sample")
+@symmetric.router("/sample", methods=["get"])
 def some_function():
     """Greets the world."""
     return "Hello World!"
@@ -211,7 +221,7 @@ def secret_function():
     return "Hello World in secret!"
 ```
 
-To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample`, `http://127.0.0.1:5000/add` and `http://127.0.0.1:5000/secret`. Here is a simple file to get you started querying your API:
+To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `POST` requests to `http://127.0.0.1:5000/add` and `http://127.0.0.1:5000/secret`. Here is a simple file to get you started querying your API:
 
 ```py
 import requests
@@ -227,7 +237,7 @@ def call_add():
         "a": 48,
         "b": 21
     }
-    response = requests.get("http://127.0.0.1:5000/add", json=payload)
+    response = requests.post("http://127.0.0.1:5000/add", json=payload)
     return response.json()
 
 
@@ -235,7 +245,7 @@ def call_secret():
     payload = {
         "symmetric_api_key": "symmetric_token"
     }
-    response = requests.get("http://127.0.0.1:5000/secret", json=payload)
+    response = requests.post("http://127.0.0.1:5000/secret", json=payload)
     return response.text
 
 
@@ -245,7 +255,121 @@ if __name__ == '__main__':
     print(call_secret())
 ```
 
-Running `symmetric docs module` would result in a file `documentation.md` being created with the following content:
+Running `symmetric docs module` would result in a file `openapi.json` being created with the following content:
+
+```json
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Module API",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/add": {
+      "post": {
+        "description": "Adds :a and :b and returns the result of\nthat operation.",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "a": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "array"
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "array"
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "default": 372
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sample": {
+      "get": {
+        "description": "Greets the world.",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+          }
+        }
+      }
+    },
+    "/secret": {
+      "post": {
+        "description": "Greets the world (secretly).",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+          },
+          "401": {
+            "description": "Invalid or non-existent authentication credentials."
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Running `symmetric docs module --markdown` would result in a file `documentation.md` being created with the following content:
 
 ``````pandoc
 # Module API Documentation
@@ -261,7 +385,7 @@ that operation.
 
 ### Metadata
 
-`HTTP` methods accepted: `GET`
+`HTTP` methods accepted: `POST`
 
 Does not require an authentication token.
 
@@ -298,7 +422,7 @@ Greets the world (secretly).
 
 ### Metadata
 
-`HTTP` methods accepted: `GET`
+`HTTP` methods accepted: `POST`
 
 Requires an authentication token.
 
@@ -312,20 +436,20 @@ No required parameters.
 
 By default, the logs in the server will be written into the `stdout` and into a file named `symmetric.log`. You can change the name of the file by specifying the `LOG_FILE` environmental variable, if you want to.
 
-## `URL` rules
+## Route rules
 
-There are some rules regarding the correct `URL`s that can be used. Failing to follow the `symmetric` `URL` rules will result in the API not being run and an error being thrown and logged. To follow the rules, an `URL`:
+There are some rules regarding the correct routes that can be used. Failing to follow the `symmetric` route rules will result in the API not being run and an error being thrown and logged. To follow the rules, a route:
 
 1. **Can't** be defined twice.
 2. **Can't** have repetitions of `/`, `-` or `_`.
 3. **Can't** have concatenations of `/` with `-` or of `_` with `-`.
 4. **Can't** include characters other than letters (uppercase and/or lowercase), `/`, `-` and `_`.
-5. **Can't** end with a `/`, a `-` or a `_`. The **only** exception of this rule is when the `URL` is just `/`, in which case, it **can** end with `/`.
+5. **Can't** end with a `/`, a `-` or a `_`. The **only** exception of this rule is when the route is just `/`, in which case, it **can** end with `/`.
 6. **Must** start with a `/`.
 
 Here are some examples.
 
-### Correct `URL` patterns
+### Correct route patterns
 
 - `/`
 - `/symmetric`
@@ -333,7 +457,7 @@ Here are some examples.
 - `/hello-world/basic_syntax`
 - `/_element/BIGelement`
 
-### Incorrect `URL` patterns
+### Incorrect route patterns
 
 - `/hi//hello`
 - `element`
@@ -363,38 +487,14 @@ Recreate environment:
 . .venv/bin/activate
 ```
 
-Build the project:
-
-```bash
-poetry build
-```
-
 Test install:
 
 ```bash
 poetry install  # will also install the symmetric CLI
 ```
 
-Push to `TestPyPi`:
+Run the tests:
 
 ```bash
-poetry config repositories.testpypi https://test.pypi.org/legacy/
-poetry publish -r testpypi
-```
-
-Download from `TestPyPi`:
-
-```bash
-deactivate
-rm -rf .testing-venv
-python3 -m venv .testing-venv
-. .testing-venv/bin/activate
-pip install click
-python -m pip install --index-url https://test.pypi.org/simple/ symmetric
-```
-
-Push to `PyPi`:
-
-```bash
-poetry publish
+python -m unittest
 ```

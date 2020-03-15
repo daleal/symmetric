@@ -20,3 +20,8 @@ dist/
 # External program testing
 program
 main.py
+
+# Auto-generated documentation
+*.md
+!README.md
+*.json
