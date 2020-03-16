@@ -39,6 +39,11 @@ class Symmetric:
         self.__server_token_name = symmetric.constants.API_SERVER_TOKEN_NAME
         self.__client_token_name = symmetric.constants.API_CLIENT_TOKEN_NAME
 
+    @property
+    def endpoints(self):
+        """Returns a list with the endpoints."""
+        return self.__endpoints
+
     def __call__(self, *args, **kwargs):
         """
         Enable WSGI servers to start with CLI utilities
