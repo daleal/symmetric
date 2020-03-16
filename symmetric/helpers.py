@@ -18,6 +18,17 @@ def verb(dirty):
     return dirty.strip().upper()
 
 
+def get_module_name(symmetric_object):
+    """
+    Given a symmetric object, returns the name of the module where the
+    first endpoint was defined. If such endpoint does not exist, return
+    a generic module name.
+    """
+    if not symmetric_object.endpoints:
+        return "symmetric"
+    return symmetric_object.endpoints[0].function.__module__.split(".")[0]
+
+
 def type_to_string(type_obj):
     """Given a python type, return its JSON schema string counterpart."""
     type_str = type_obj.__name__

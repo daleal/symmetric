@@ -13,6 +13,8 @@ import symmetric.constants
 import symmetric.endpoints
 import symmetric.helpers
 import symmetric.errors
+import symmetric.openapi.utils
+import symmetric.openapi.docs
 
 
 class Symmetric:
@@ -36,13 +38,48 @@ class Symmetric:
     def __init__(self, app_object):
         self.__app = app_object
         self.__endpoints = []
+        self.__openapi_schema = None
         self.__server_token_name = symmetric.constants.API_SERVER_TOKEN_NAME
         self.__client_token_name = symmetric.constants.API_CLIENT_TOKEN_NAME
+        self.setup()
 
     @property
     def endpoints(self):
         """Returns a list with the endpoints."""
         return self.__endpoints
+
+    @property
+    def openapi(self):
+        """
+        Returns the openapi schema. If it does not exist, it creates it
+        and returns it.
+        """
+        if not self.__openapi_schema:
+            self.__openapi_schema = symmetric.openapi.utils.get_openapi(
+                self.__endpoints,
+                symmetric.helpers.humanize(
+                    symmetric.helpers.get_module_name(self)
+                ) + " API"
+            )
+        return self.__openapi_schema
+
+    def setup(self):
+        """Sets up the API."""
+        # Set up the endpoint for the openapi json schema
+        # pylint: disable=W0612
+        @self.__app.route(symmetric.constants.OPENAPI_ROUTE)
+        def openapi_schema():
+            return self.openapi
+
+        # Set up the endpoint for the interactive documentation
+        # pylint: disable=W0612
+        @self.__app.route(symmetric.constants.DOCUMENTATION_ROUTE)
+        def docs():
+            return symmetric.openapi.docs.get_redoc_html(
+                symmetric.helpers.humanize(
+                    symmetric.helpers.get_module_name(self)
+                ) + " API"
+            )
 
     def __call__(self, *args, **kwargs):
         """

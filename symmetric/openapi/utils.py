@@ -6,6 +6,7 @@ import inspect
 import functools
 
 import symmetric.openapi.constants
+import symmetric.openapi.helpers
 
 
 def get_openapi_endpoint(endpoint):
@@ -116,7 +117,8 @@ def get_openapi(endpoints, title, version="0.0.1", openapi_version="3.0.3"):
         },
         "paths": functools.reduce(
             lambda x, y: {**x, **y},
-            [get_openapi_endpoint(endpoint) for endpoint in endpoints],
+            [get_openapi_endpoint(endpoint) for endpoint in endpoints
+                if symmetric.openapi.helpers.is_not_docs(endpoint.route)],
             {}
         )
     }
