@@ -37,7 +37,7 @@ def document_openapi(module, filename):
     """
     symmetric_object = get_symmetric_object(module, True)
     docs = symmetric.openapi.utils.get_openapi(
-        symmetric_object.endpoints,
+        symmetric_object,
         f"{symmetric.helpers.humanize(module)} API"
     )
     with open(filename, "w") as docs_file:

@@ -21,6 +21,12 @@ def get_openapi_endpoint(endpoint):
         }
         has_props = bool(request_body["properties"])
         has_body = has_props or bool(request_body["additionalProperties"])
+        if endpoint.has_token:
+            path_doc[http_method]["security"] = [
+                {
+                    "APIKeyAuth": []
+                }
+            ]
         if has_body:
             path_doc[http_method]["requestBody"] = {
                 "required": has_props,
@@ -79,18 +85,15 @@ def get_openapi_endpoint_responses(endpoint):
     params = inspect.getfullargspec(endpoint.function)
     responses = {
         f"{endpoint.response_code}": {
-            "description": "Successful operation"
+            "$ref": "#/components/responses/SuccesfulOperation"
         },
         "500": {
-            "description": "Unexpected internal error (API method "
-                           "failed, probably due to a missuse of the "
-                           "underlying function)."
+            "$ref": "#/components/responses/InternalError"
         }
     }
     if endpoint.has_token:
         responses["401"] = {
-            "description": "Invalid or non-existent authentication "
-                           "credentials."
+            "$ref": "#/components/responses/UnauthorizedError"
         }
     if "return" in params.annotations:
         responses[f"{endpoint.response_code}"]["content"] = {
@@ -104,7 +107,7 @@ def get_openapi_endpoint_responses(endpoint):
     return responses
 
 
-def get_openapi(endpoints, title, version="0.0.1", openapi_version="3.0.3"):
+def get_openapi(sym_obj, title, version="0.0.1", openapi_version="3.0.3"):
     """
     Gets the OpenAPI spec of every endpoint and assembles it into a
     JSON formatted object.
@@ -117,8 +120,31 @@ def get_openapi(endpoints, title, version="0.0.1", openapi_version="3.0.3"):
         },
         "paths": functools.reduce(
             lambda x, y: {**x, **y},
-            [get_openapi_endpoint(endpoint) for endpoint in endpoints
+            [get_openapi_endpoint(endpoint) for endpoint in sym_obj.endpoints
                 if symmetric.openapi.helpers.is_not_docs(endpoint.route)],
             {}
-        )
+        ),
+        "components": {
+            "securitySchemes": {
+                "APIKeyAuth": {
+                    "type": "apiKey",
+                    "in": "header",
+                    "name": sym_obj.client_token_name
+                }
+            },
+            "responses": {
+                "SuccesfulOperation": {
+                    "description": "Successful operation"
+                },
+                "UnauthorizedError": {
+                    "description": "Invalid or non-existent authentication "
+                                   "credentials."
+                },
+                "InternalError": {
+                    "description": "Unexpected internal error (API method "
+                                   "failed, probably due to a missuse of the "
+                                   "underlying function)."
+                }
+            }
+        }
     }

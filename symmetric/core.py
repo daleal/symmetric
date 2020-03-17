@@ -56,12 +56,17 @@ class Symmetric:
         """
         if not self.__openapi_schema:
             self.__openapi_schema = symmetric.openapi.utils.get_openapi(
-                self.__endpoints,
+                self,
                 symmetric.helpers.humanize(
                     symmetric.helpers.get_module_name(self)
                 ) + " API"
             )
         return self.__openapi_schema
+
+    @property
+    def client_token_name(self):
+        """Return the client token name."""
+        return self.__client_token_name
 
     def setup(self):
         """Sets up the API."""
