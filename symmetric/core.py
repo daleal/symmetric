@@ -188,7 +188,7 @@ class Symmetric:
         docs += "API Documentation\n\n"
         docs += ("Endpoints that require an authentication token should "
                  f"send it in a key named `{self.__client_token_name}` "
-                 "inside the request body.\n\n")
+                 "inside the request headers.\n\n")
         raw_docs = [
             x.generate_markdown_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)

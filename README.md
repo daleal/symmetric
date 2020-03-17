@@ -15,7 +15,8 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 - Auto logging.
 - Server-side error detection and exception handling.
 - Native support for an authentication token on a per-endpoint basis.
-- Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation for your API.
+- Auto-generated `/docs` endpoint for your API with **interactive documentation**.
+- Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation files for your API.
 
 ## Installing
 
@@ -112,7 +113,7 @@ With this in mind, you can transform any existing project into a usable API very
 
 ### The `symmetric` token authentication
 
-To speed up your API creation even more, `symmetric` includes native support for a simple token authentication. It works like this:
+To speed up your API creation even more, `symmetric` includes native support for a simple token authentication. **Disclaimer**: **never** use the `symmetric` token in production without enforcing `HTTPS`. The token travels inside the header of the request, so it wil be visible to **anyone** sniffing the traffic in your network. The token works like this:
 
 1. **Set up the token in the server.**
 
@@ -131,7 +132,7 @@ To speed up your API creation even more, `symmetric` includes native support for
     Add the `symmetric` router decorator in the following manner:
 
     ```py
-    @symmetric.router("/secret", auth_token=True)
+    @symmetric.router("/secret", methods=["get"], auth_token=True)
     def secret_function():
         """Greets the world (secretly)."""
         return "Hello World in secret!"
@@ -141,15 +142,15 @@ To speed up your API creation even more, `symmetric` includes native support for
 
 3. **Query your endpoint.**
 
-    To query your endpoint, the request body must include a key named `symmetric_api_key` with a value to match the one of the environment's `SYMMETRIC_API_KEY`. So, for instance, if you are using the default `SYMMETRIC_API_KEY` value (`symmetric_token`), the request body for the `/secrets` endpoint should be:
+    To query your endpoint, the request headers must include a key named `symmetric_api_key` with a value to match the one of the environment's `SYMMETRIC_API_KEY`. So, for instance, if you are using the default `SYMMETRIC_API_KEY` value (`symmetric_token`), the request headers for the `/secrets` endpoint should be:
 
     ```py
-    payload = {
+    headers = {
         "symmetric_api_key": "symmetric_token"
     }
     ```
 
-    By sending that payload in the request body as a `json`, the request can access the endpoint correctly.
+    By sending that payload in the request headers, the endpoint can be accessed correctly.
 
 ### Auto-generating the API documentation
 
@@ -159,7 +160,7 @@ Generating API documentation is simple with `symmetric`. Just run the following 
 symmetric docs <module>
 ```
 
-This will **automagically** generate a `json` file documenting the API with an OpenAPI specification. Seems too simple to be true, right? Go ahead, try it yourself!
+This will **automagically** generate a `json` file documenting the API with an OpenAPI specification. Seems too simple to be true, right? Go ahead, try it yourself! Also, don't be afraid of using **[type annotations](https://docs.python.org/3/library/typing.html)**... The annotations will be documented too! They will restrict the parameter types within the OpenAPI generated `json`!
 
 You can also generate a more simple and human-readable documentation file with the `-m` or the `--markdown` flag.
 
@@ -170,6 +171,12 @@ symmetric docs <module> --markdown
 This will also **automagically** generate a markdown file documenting each endpoint with the function docstring, required arguments and more data about that endpoint.
 
 You can also specify the name of the documentation file (defaults to `openapi.json` for the default documentation and to `documentation.md` for the markdown documentation) using the `-f` or the `--filename` flag.
+
+### ReDoc Documentation
+
+By default, you can `GET` the `/docs` endpoint (using a browser) to access to **interactive auto-generated documentation** about your API. It will include request bodies for each endpoint, response codes, authentication required, default values, and much more!
+
+**Tip**: Given that the [ReDoc Documentation](https://github.com/Redocly/redoc) is based on the OpenAPI standard, using **type annotations** in your code will result in a more detailed interactive documentation. Instead of the parameters being allowed to be any type, they will be forced into the type declared in your code. Cool, right?
 
 ### The whole example
 
@@ -215,13 +222,13 @@ def another_function(a, b=372):
     return a + b
 
 
-@symmetric.router("/secret", auth_token=True)
+@symmetric.router("/secret", methods=["get"], auth_token=True)
 def secret_function():
     """Greets the world (secretly)."""
     return "Hello World in secret!"
 ```
 
-To run the server, just run `symmetric run module`. Now, you can send `GET` requests to `http://127.0.0.1:5000/sample` and `POST` requests to `http://127.0.0.1:5000/add` and `http://127.0.0.1:5000/secret`. Here is a simple file to get you started querying your API:
+To run the server, just run `symmetric run module`. Now, you can send `POST` requests to `http://127.0.0.1:5000/add` and `GET` requests to `http://127.0.0.1:5000/sample` and `http://127.0.0.1:5000/secret`. Here is a simple file to get you started querying your API:
 
 ```py
 import requests
@@ -242,10 +249,10 @@ def call_add():
 
 
 def call_secret():
-    payload = {
+    headers = {
         "symmetric_api_key": "symmetric_token"
     }
-    response = requests.post("http://127.0.0.1:5000/secret", json=payload)
+    response = requests.get("http://127.0.0.1:5000/secret", headers=headers)
     return response.text
 
 
@@ -270,10 +277,10 @@ Running `symmetric docs module` would result in a file `openapi.json` being crea
         "description": "Adds :a and :b and returns the result of\nthat operation.",
         "responses": {
           "200": {
-            "description": "Successful operation"
+            "$ref": "#/components/responses/SuccesfulOperation"
           },
           "500": {
-            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+            "$ref": "#/components/responses/InternalError"
           }
         },
         "requestBody": {
@@ -341,10 +348,10 @@ Running `symmetric docs module` would result in a file `openapi.json` being crea
         "description": "Greets the world.",
         "responses": {
           "200": {
-            "description": "Successful operation"
+            "$ref": "#/components/responses/SuccesfulOperation"
           },
           "500": {
-            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -354,15 +361,40 @@ Running `symmetric docs module` would result in a file `openapi.json` being crea
         "description": "Greets the world (secretly).",
         "responses": {
           "200": {
-            "description": "Successful operation"
+            "$ref": "#/components/responses/SuccesfulOperation"
           },
           "500": {
-            "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
+            "$ref": "#/components/responses/InternalError"
           },
           "401": {
-            "description": "Invalid or non-existent authentication credentials."
+            "$ref": "#/components/responses/UnauthorizedError"
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "APIKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "symmetric_api_key"
+      }
+    },
+    "responses": {
+      "SuccesfulOperation": {
+        "description": "Successful operation"
+      },
+      "UnauthorizedError": {
+        "description": "Invalid or non-existent authentication credentials."
+      },
+      "InternalError": {
+        "description": "Unexpected internal error (API method failed, probably due to a missuse of the underlying function)."
       }
     }
   }
@@ -374,7 +406,7 @@ Running `symmetric docs module --markdown` would result in a file `documentation
 ``````pandoc
 # Module API Documentation
 
-Endpoints that require an authentication token should send it in a key named `symmetric_api_key` inside the request body.
+Endpoints that require an authentication token should send it in a key named `symmetric_api_key` inside the request headers.
 
 ## `/add`
 
@@ -422,7 +454,7 @@ Greets the world (secretly).
 
 ### Metadata
 
-`HTTP` methods accepted: `POST`
+`HTTP` methods accepted: `GET`
 
 Requires an authentication token.
 
