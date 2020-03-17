@@ -143,12 +143,13 @@ class Symmetric:
 
                     # Get the body
                     body = flask.request.get_json()
+                    request_headers = flask.request.headers
                     if not body:
                         body = {}
 
                     # Check for token authentication
                     symmetric.helpers.authenticate(
-                        body, auth_token, self.__client_token_name,
+                        request_headers, auth_token, self.__client_token_name,
                         self.__server_token_name)
 
                     # Filter method parameters
