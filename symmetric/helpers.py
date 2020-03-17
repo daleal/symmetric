@@ -18,6 +18,17 @@ def verb(dirty):
     return dirty.strip().upper()
 
 
+def get_module_name(symmetric_object):
+    """
+    Given a symmetric object, returns the name of the module where the
+    first endpoint was defined. If such endpoint does not exist, return
+    a generic module name.
+    """
+    if not symmetric_object.endpoints:
+        return "symmetric"
+    return symmetric_object.endpoints[0].function.__module__.split(".")[0]
+
+
 def type_to_string(type_obj):
     """Given a python type, return its JSON schema string counterpart."""
     type_str = type_obj.__name__
@@ -56,22 +67,22 @@ def parse_route(route):
         raise symmetric.errors.IncorrectRouteFormatError(message)
 
 
-def authenticate(body, auth_token, client_token_name, server_token_name):
+def authenticate(headers, auth_token, client_token_name, server_token_name):
     """
-    Raises an exception if the body does not include the client token
+    Raises an exception if the headers do not include the client token
     or if it is different to the server token.
     """
     if not auth_token:
         # No auth is required
         return
     # Auth is required from now on
-    if client_token_name not in body:
-        # The body does not include the desired token
+    if client_token_name not in headers:
+        # The headers do not include the desired token
         error = "The request does not include an authentication token."
         raise symmetric.errors.AuthenticationRequiredError(error)
-    # If the token in the body equals the one in the env, return True
+    # If the token in the headers equals the one in the env, return True
     token = os.getenv(server_token_name, symmetric.constants.API_DEFAULT_TOKEN)
-    if body[client_token_name] != token:
+    if headers[client_token_name] != token:
         error = "Incorrect authentication token."
         raise symmetric.errors.AuthenticationRequiredError(error)
 

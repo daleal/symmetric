@@ -61,7 +61,7 @@ class AuthenticationTestCase(unittest.TestCase):
     def test_no_token_required(self):
         """Tests that an error isn't raised when there is no token required."""
         symmetric.helpers.authenticate(
-            body={},
+            headers={},
             auth_token=False,
             client_token_name=symmetric.constants.API_CLIENT_TOKEN_NAME,
             server_token_name=symmetric.constants.API_SERVER_TOKEN_NAME
@@ -70,7 +70,7 @@ class AuthenticationTestCase(unittest.TestCase):
     def test_correct_token(self):
         """Tests that an error isn't raised when the correct token is given."""
         symmetric.helpers.authenticate(
-            body={
+            headers={
                 self.client_token_name: self.token
             },
             auth_token=True,
@@ -82,7 +82,7 @@ class AuthenticationTestCase(unittest.TestCase):
         """Tests that an error is raised when the token is not given."""
         with self.assertRaises(symmetric.errors.AuthenticationRequiredError):
             symmetric.helpers.authenticate(
-                body={
+                headers={
                     self.client_token_name: self.incorrect_token
                 },
                 auth_token=True,
@@ -94,7 +94,7 @@ class AuthenticationTestCase(unittest.TestCase):
         """Tests that an error is raised when an incorrect token is given."""
         with self.assertRaises(symmetric.errors.AuthenticationRequiredError):
             symmetric.helpers.authenticate(
-                body={},
+                headers={},
                 auth_token=True,
                 client_token_name=symmetric.constants.API_CLIENT_TOKEN_NAME,
                 server_token_name=symmetric.constants.API_SERVER_TOKEN_NAME

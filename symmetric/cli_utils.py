@@ -9,6 +9,7 @@ import traceback
 import importlib
 
 import symmetric.errors
+import symmetric.openapi.utils
 
 
 def start_server(module, server, port, debug):
@@ -35,7 +36,10 @@ def document_openapi(module, filename):
     Gets the symmetric object and then calls the OpenAPI Specification method.
     """
     symmetric_object = get_symmetric_object(module, True)
-    docs = symmetric_object.openapi_documentation(module)
+    docs = symmetric.openapi.utils.get_openapi(
+        symmetric_object,
+        f"{symmetric.helpers.humanize(module)} API"
+    )
     with open(filename, "w") as docs_file:
         json.dump(docs, docs_file, indent=2)
 

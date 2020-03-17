@@ -6,6 +6,10 @@ A module for every constant of symmetric.
 # Logs
 LOG_FILE_NAME = "symmetric.log"
 
+# Docs
+OPENAPI_ROUTE = "/openapi.json"
+DOCUMENTATION_ROUTE = "/docs"
+
 # API token authentication
 API_CLIENT_TOKEN_NAME = "symmetric_api_key"
 API_SERVER_TOKEN_NAME = "SYMMETRIC_API_KEY"

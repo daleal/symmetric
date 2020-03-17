@@ -13,6 +13,8 @@ import symmetric.constants
 import symmetric.endpoints
 import symmetric.helpers
 import symmetric.errors
+import symmetric.openapi.utils
+import symmetric.openapi.docs
 
 
 class Symmetric:
@@ -36,8 +38,53 @@ class Symmetric:
     def __init__(self, app_object):
         self.__app = app_object
         self.__endpoints = []
+        self.__openapi_schema = None
         self.__server_token_name = symmetric.constants.API_SERVER_TOKEN_NAME
         self.__client_token_name = symmetric.constants.API_CLIENT_TOKEN_NAME
+        self.setup()
+
+    @property
+    def endpoints(self):
+        """Returns a list with the endpoints."""
+        return self.__endpoints
+
+    @property
+    def openapi(self):
+        """
+        Returns the openapi schema. If it does not exist, it creates it
+        and returns it.
+        """
+        if not self.__openapi_schema:
+            self.__openapi_schema = symmetric.openapi.utils.get_openapi(
+                self,
+                symmetric.helpers.humanize(
+                    symmetric.helpers.get_module_name(self)
+                ) + " API"
+            )
+        return self.__openapi_schema
+
+    @property
+    def client_token_name(self):
+        """Return the client token name."""
+        return self.__client_token_name
+
+    def setup(self):
+        """Sets up the API."""
+        # Set up the endpoint for the openapi json schema
+        # pylint: disable=W0612
+        @self.__app.route(symmetric.constants.OPENAPI_ROUTE)
+        def openapi_schema():
+            return self.openapi
+
+        # Set up the endpoint for the interactive documentation
+        # pylint: disable=W0612
+        @self.__app.route(symmetric.constants.DOCUMENTATION_ROUTE)
+        def docs():
+            return symmetric.openapi.docs.get_redoc_html(
+                symmetric.helpers.humanize(
+                    symmetric.helpers.get_module_name(self)
+                ) + " API"
+            )
 
     def __call__(self, *args, **kwargs):
         """
@@ -101,12 +148,13 @@ class Symmetric:
 
                     # Get the body
                     body = flask.request.get_json()
+                    request_headers = flask.request.headers
                     if not body:
                         body = {}
 
                     # Check for token authentication
                     symmetric.helpers.authenticate(
-                        body, auth_token, self.__client_token_name,
+                        request_headers, auth_token, self.__client_token_name,
                         self.__server_token_name)
 
                     # Filter method parameters
@@ -140,7 +188,7 @@ class Symmetric:
         docs += "API Documentation\n\n"
         docs += ("Endpoints that require an authentication token should "
                  f"send it in a key named `{self.__client_token_name}` "
-                 "inside the request body.\n\n")
+                 "inside the request headers.\n\n")
         raw_docs = [
             x.generate_markdown_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)
