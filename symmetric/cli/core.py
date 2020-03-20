@@ -5,7 +5,7 @@ A module to route the CLI traffic.
 import sys
 import argparse
 
-import symmetric.cli_utils
+import symmetric.cli.utils
 
 
 def dispatcher():
@@ -19,17 +19,17 @@ def dispatcher():
 
     try:
         if args.action == "run":
-            symmetric.cli_utils.start_server(
+            symmetric.cli.utils.start_server(
                 args.module, args.server, args.port, args.debug
             )
         elif args.action == "docs":
             if args.markdown:
-                symmetric.cli_utils.document_api_markdown(
+                symmetric.cli.utils.document_api_markdown(
                     args.module,
                     args.filename if args.filename else "documentation.md"
                 )
             else:
-                symmetric.cli_utils.document_openapi(
+                symmetric.cli.utils.document_openapi(
                     args.module,
                     args.filename if args.filename else "openapi.json"
                 )

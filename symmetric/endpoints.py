@@ -11,11 +11,20 @@ class Endpoint:
     Class to encapsulate an endpoint.
     """
 
-    def __init__(self, route, methods, response_code, function, has_token):
+    def __init__(
+            self,
+            route,
+            methods,
+            response_code,
+            function,
+            flask_function,
+            has_token
+    ):
         self.__route = route
         self.__methods = methods
         self.__response_code = response_code
         self.__function = function
+        self.__flask_function = flask_function
         self.__has_token = has_token
 
     def __lt__(self, other):
