@@ -43,7 +43,7 @@ flake8 = "^3.7.9"
 pylint = "^2.4.4"
 
 [tool.poetry.plugins."console_scripts"]
-symmetric = "symmetric.command_line_interface:dispatcher"
+symmetric = "symmetric.cli.core:dispatcher"
 
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/daleal/symmetric/issues"
