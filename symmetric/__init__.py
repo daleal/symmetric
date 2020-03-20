@@ -3,4 +3,4 @@ Init file for the symmetric module.
 """
 
 
-from symmetric.core import sym as symmetric
+from symmetric.core import symmetric_object as symmetric

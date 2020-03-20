@@ -5,7 +5,6 @@ The main module of symmetric.
 import sys
 import json
 import bisect
-import functools
 import flask
 
 import symmetric.logging
@@ -98,8 +97,7 @@ class Symmetric:
         """
         Decorator modifier. Recieves a route string, a list of HTTP methods, a
         response code and a boolean indicating whether or not to authenticate.
-        If the route does not start with '/', it gets added. HTTP methods are
-        also filtered. Returns the final decorated function.
+        The route gets format-checked. Returns the original function unchanged.
         """
         try:
             symmetric.helpers.parse_route(route)
@@ -117,20 +115,8 @@ class Symmetric:
         def decorator(function):
             """
             Function decorator. Recieves the main function and wraps it as a
-            flask endpoint. Returns the wrapped function.
+            flask endpoint. Returns the original unwrapped function.
             """
-            try:
-                self.__save_endpoint(
-                    symmetric.endpoints.Endpoint(
-                        route, methods, response_code, function, auth_token
-                    )
-                )
-            except symmetric.errors.DuplicatedRouteError as err:
-                self.__app.logger.error(
-                    f"[[symmetric]] DuplicatedRouteError: {err}"
-                )
-                sys.exit(1)
-
             # Decorate the wrapper
             @self.__app.route(
                 route, methods=methods, endpoint=function.__name__
@@ -172,7 +158,26 @@ class Symmetric:
                         f"[[symmetric]] exception caught: {err}"
                     )
                     return flask.jsonify({}), 500
-            return wrapper
+
+            # Save Endpoint
+            try:
+                self.__save_endpoint(
+                    symmetric.endpoints.Endpoint(
+                        route,
+                        methods,
+                        response_code,
+                        function,  # Save unchanged function
+                        wrapper,   # Save flask decorated function
+                        auth_token
+                    )
+                )
+            except symmetric.errors.DuplicatedRouteError as err:
+                self.__app.logger.error(
+                    f"[[symmetric]] DuplicatedRouteError: {err}"
+                )
+                sys.exit(1)
+
+            return function  # Return unchanged function
         return decorator
 
     def run(self, *args, **kwargs):
@@ -193,24 +198,6 @@ class Symmetric:
             x.generate_markdown_documentation() for x in self.__endpoints]
         docs += "\n".join(raw_docs)
         return docs
-
-    def openapi_documentation(self, module_name):
-        """
-        Gets the OpenAPI spec of every endpoint and assembles it into a
-        JSON formatted string.
-        """
-        return {
-            "openapi": "3.0.3",
-            "info": {
-                "title": f"{symmetric.helpers.humanize(module_name)} API",
-                "version": "0.0.1"  # Arbitrary
-            },
-            "paths": functools.reduce(
-                lambda x, y: {**x, **y},
-                [x.openapi_documentation() for x in self.__endpoints],
-                {}
-            )
-        }
 
     def __save_endpoint(self, endpoint):
         """Saves an endpoint object and sorts the endpoints list."""
@@ -247,4 +234,4 @@ app = flask.Flask(__name__)
 
 
 # Create symmetric object
-sym = Symmetric(app)
+symmetric_object = Symmetric(app)
