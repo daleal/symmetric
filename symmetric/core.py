@@ -106,6 +106,34 @@ class _Symmetric(metaclass=_SymmetricSingleton):
         """
         return self.__app.__call__(*args, **kwargs)
 
+    def set_client_token_name(self, client_token_name):
+        """Changes the default client token name to :client_token_name."""
+        if not isinstance(client_token_name, str):  # Manage wrong type
+            error = ("Invalid client token name type "
+                     "given on set_client_token_name call")
+            raise symmetric.errors.InvalidTokenNameError(error)
+        if not client_token_name:  # Manage empty client token name
+            error = ("Empty client token name given "
+                     "on set_client_token_name call")
+            raise symmetric.errors.InvalidTokenNameError(error)
+        # Set new client token name
+        self.__client_token_name = client_token_name
+        return True
+
+    def set_server_token_name(self, server_token_name):
+        """Changes the default server token name to :server_token_name."""
+        if not isinstance(server_token_name, str):  # Manage wrong type
+            error = ("Invalid server token name type "
+                     "given on set_server_token_name call")
+            raise symmetric.errors.InvalidTokenNameError(error)
+        if not server_token_name:  # Manage empty server token name
+            error = ("Empty server token name given "
+                     "on set_server_token_name call")
+            raise symmetric.errors.InvalidTokenNameError(error)
+        # Set new server token name
+        self.__server_token_name = server_token_name
+        return True
+
     def router(self, route, methods=["post"], response_code=200,
                auth_token=False):
         """

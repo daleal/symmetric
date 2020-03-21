@@ -28,3 +28,9 @@ class DuplicatedRouteError(Exception):
     """
     Exception for when an endpoint route is already in the added endpoints.
     """
+
+
+class InvalidTokenNameError(Exception):
+    """
+    Exception for when a token name is not a string or is an empty string.
+    """
