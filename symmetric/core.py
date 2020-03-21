@@ -16,7 +16,21 @@ import symmetric.openapi.utils
 import symmetric.openapi.docs
 
 
-class Symmetric:
+class _SymmetricSingleton(type):
+
+    """
+    Singleton metaclass to limit the existance of the symmetric object to one.
+    """
+
+    def __call__(cls, *args, **kwargs):
+        """Defines the class creation method."""
+        if not hasattr(cls, "symmetric_instance"):  # Object does not exist
+            # Create object
+            cls.symmetric_instance = super().__call__(*args, **kwargs)
+        return cls.symmetric_instance  # Return symmetric object
+
+
+class _Symmetric(metaclass=_SymmetricSingleton):
 
     """
     Main class to encapsulate every important feature of the symmetric package.
@@ -34,8 +48,8 @@ class Symmetric:
         "TRACE"
     ]
 
-    def __init__(self, app_object):
-        self.__app = app_object
+    def __init__(self):
+        self.__app = flask.Flask(__name__)  # Create flask app object
         self.__endpoints = []
         self.__openapi_schema = None
         self.__server_token_name = symmetric.constants.API_SERVER_TOKEN_NAME
@@ -109,7 +123,7 @@ class Symmetric:
 
         methods = [
             symmetric.helpers.verb(x) for x in methods
-            if symmetric.helpers.verb(x) in Symmetric.__allowed_methods
+            if symmetric.helpers.verb(x) in _Symmetric.__allowed_methods
         ]
 
         def decorator(function):
@@ -229,9 +243,5 @@ class Symmetric:
         ))
 
 
-# Create flask app object
-app = flask.Flask(__name__)
-
-
 # Create symmetric object
-symmetric_object = Symmetric(app)
+symmetric_object = _Symmetric()
