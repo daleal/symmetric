@@ -152,6 +152,25 @@ To speed up your API creation even more, `symmetric` includes native support for
 
     By sending that payload in the request headers, the endpoint can be accessed correctly.
 
+#### Changing the default token names
+
+Note that you can change the default **client** token name and **server** token name. To change the **client** token name, run the following command at the start of your module:
+
+```py
+symmetric.set_client_token_name("new_client_token_name")
+```
+
+After that, the key of the token in every request header must be `new_client_token_name`.
+
+To change the **server** token name, run the following command at the start of your module:
+
+```py
+symmetric.set_server_token_name("NEW_SERVER_TOKEN_NAME")
+```
+
+After that, the key of the token in the server environment must be `NEW_SERVER_TOKEN_NAME`.
+
+
 ### Auto-generating the API documentation
 
 Generating API documentation is simple with `symmetric`. Just run the following command:
