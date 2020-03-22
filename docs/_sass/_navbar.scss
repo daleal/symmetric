@@ -1,0 +1,122 @@
+// Practically a copy-paste of
+// https://github.com/fireship-io/222-responsive-icon-nav-css
+
+@import "variables";
+
+
+.content-container {
+  margin-left: 5em;
+}
+
+.s-navbar {
+  z-index: 10;
+  position: fixed;
+  background-color: var(--primary-navbar-color);
+  transition: width 200ms ease;
+}
+
+.s-navbar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.s-nav-item {
+  width: 100%;
+}
+
+.s-nav-item:last-child {
+  margin-top: auto;
+}
+
+.s-nav-link {
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  color: var(--medium-accent-color);
+  text-decoration: none;
+  filter: grayscale(100%) opacity(0.7);
+  transition: var(--transition-speed);
+}
+
+.s-nav-link:hover {
+  filter: grayscale(0%) opacity(1);
+  background: var(--secondary-navbar-color);
+  color: var(--soft-color);
+}
+
+.s-link-text {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms linear;
+  margin-left: 1rem;
+}
+
+.s-nav-link svg {
+  width: 2rem;
+  min-width: 2rem;
+  max-width: 2rem;
+  margin: 0 1.5rem;
+}
+
+.fa-primary {
+  color: var(--medium-accent-color);
+}
+
+.fa-secondary {
+  color: var(--light-accent-color);
+}
+
+.fa-primary,
+.fa-secondary {
+  transition: var(--transition-speed);
+}
+
+// Mobile
+@media only screen and (max-width: 600px) {
+  .s-navbar {
+    bottom: 0;
+    width: 100vw;
+    height: 5rem;
+  }
+
+  .s-navbar-nav {
+    flex-direction: row;
+  }
+
+  .s-nav-link {
+    justify-content: center;
+  }
+
+  .s-link-text {
+    display: none;
+  }
+
+  .content-container {
+    margin-left: 0;
+    margin-bottom: 5em;
+    padding: 1rem;
+  }
+}
+
+// Desktop
+@media only screen and (min-width: 600px) {
+  .s-navbar {
+    top: 0;
+    width: 5rem;
+    height: 100vh;
+  }
+
+  .s-navbar:hover {
+    width: 16rem;
+  }
+
+  .s-navbar:hover .s-link-text {
+    visibility: visible;
+    opacity: 1;
+  }
+}

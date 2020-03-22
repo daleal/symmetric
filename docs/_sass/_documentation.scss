@@ -1,0 +1,48 @@
+.documentation-body {
+  padding: 1rem 2rem;
+}
+
+// TOC
+.documentation-toc {
+  padding: 1rem;
+}
+
+.documentation-toc a {
+  color: var(--black-color);
+  font-weight: 700;
+}
+
+.documentation-toc a.selected-toc {
+  color: var(--light-accent-color);
+}
+
+.documentation-toc a:hover {
+  color: var(--light-grey-color);
+}
+
+.documentation-toc li {
+  list-style: none;
+}
+
+.documentation-toc > li:not(:first-child) {
+  padding-top: 2rem;
+}
+
+.toc-subnav {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 1.2rem;
+}
+
+.toc-subnav li a:before {
+  content: ">>";
+  color: var(--medium-accent-color);
+  padding-right: 0.3rem;
+}
+.toc-subnav li a:hover:before {
+  color: var(--dark-accent-color);
+}
+
+.selected-toc {
+  color: var(--light-accent-color);
+}

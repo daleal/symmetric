@@ -1,0 +1,7 @@
+<a class="{% if include.document.permalink == page.permalink %}selected-toc{% endif %}" href="{{ include.document.permalink }}">{{ include.document.title }}</a>
+
+{% if include.document.permalink == page.permalink %}
+  {% assign min_toc = page.toc_min | default: site.toc_min | default: 2 %}
+  {% assign max_toc = page.toc_max | default: site.toc_max | default: 2 %}
+  {% include toc.html html=content class="toc-subnav" h_min=min_toc h_max=max_toc %}
+{% endif %}
