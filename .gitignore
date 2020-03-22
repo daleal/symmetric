@@ -28,3 +28,4 @@ openapi.json
 # Jekyll site
 _site
 .jekyll-cache
+Gemfile.lock
