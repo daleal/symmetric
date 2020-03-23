@@ -1,3 +1,7 @@
+---
+layout: content
+---
+
 # Symmetric
 
 ![PyPI - Version](https://img.shields.io/pypi/v/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff&label=version)
@@ -18,7 +22,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 - Auto-generated `/docs` endpoint for your API with **interactive documentation**.
 - Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation files for your API.
 
-The [complete documentation](https://symmetric.one/docs/basic-usage/) is available on the [official website](https://symmetric.one/).
+The [complete documentation](https://symmetric.one/docs/) is available on the [official website](https://symmetric.one/).
 
 ## Installing
 
@@ -118,36 +122,6 @@ With this in mind, you can transform any existing project into a usable API very
 By default, you can `GET` the `/docs` endpoint (using a browser) to access to **interactive auto-generated documentation** about your API. It will include request bodies for each endpoint, response codes, authentication required, default values, and much more!
 
 **Tip**: Given that the [ReDoc Documentation](https://github.com/Redocly/redoc) is based on the OpenAPI standard, using **type annotations** in your code will result in a more detailed interactive documentation. Instead of the parameters being allowed to be any type, they will be forced into the type declared in your code. Cool, right?
-
-## Developing
-
-Clone the repository:
-
-```bash
-git clone https://github.com/daleal/symmetric.git
-
-cd symmetric
-```
-
-Recreate environment:
-
-```bash
-./environment.sh
-
-. .venv/bin/activate
-```
-
-Test install:
-
-```bash
-poetry install  # will also install the symmetric CLI
-```
-
-Run the tests:
-
-```bash
-python -m unittest
-```
 
 ## Resources
 

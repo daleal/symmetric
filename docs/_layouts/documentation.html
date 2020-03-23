@@ -1,0 +1,24 @@
+---
+layout: default
+---
+
+<section>
+  <div class="container">
+    <div>
+      <div>
+        <div class="columns is-desktop">
+          <ul class="column is-3 documentation-toc">
+            {% for document in site.docs %}
+              <li>
+                {% include toc-nav.html document=document %}
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="column is-9 documentation-body">
+            {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

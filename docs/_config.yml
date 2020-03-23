@@ -1,0 +1,23 @@
+title: Symmetric Documentation
+
+sass:
+  sass_dir: _sass
+  style: compressed
+
+highlighter: rouge
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+collections:
+  docs:
+    output: true
+    order:
+      - basic-usage.md
+      - decorator.md
+      - cli.md
+      - auto-documentation.md
+      - route-rules.md
+      - additional-configuration.md

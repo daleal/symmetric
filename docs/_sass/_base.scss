@@ -1,0 +1,84 @@
+:root {
+  font-size: 16px;
+  background-color: var(--soft-color);
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  height: 0.25rem;
+  width: 0.25rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--soft-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--light-grey-color);
+}
+
+// Main Container
+.content-container {
+  font-size: 100%;
+  font-weight: 400;
+  font-family: var(--font-family);
+  color: var(--black-color);
+}
+
+// Titles
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+  line-height: 1.7;
+  margin: 0.3em 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3.5rem;
+}
+
+h2 {
+  font-size: 2.2rem;
+}
+
+h3 {
+  font-size: 1.7rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
+// Paragraphs and general elements
+p {
+  margin: 0.5rem 0;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+}
+
+li {
+  display: list-item;
+  text-align: -webkit-match-parent;
+}
+
+// Mobile
+@media only screen and (max-width: 600px) {
+  .content-container {
+    margin-top: 0;
+  }
+}
+
+// Desktop
+@media only screen and (min-width: 600px) {
+  .content-container {
+    margin-top: 7em;
+  }
+}

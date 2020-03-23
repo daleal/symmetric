@@ -22,6 +22,10 @@ program
 main.py
 
 # Auto-generated documentation
-*.md
-!README.md
-*.json
+documentation.md
+openapi.json
+
+# Jekyll site
+_site
+.jekyll-cache
+Gemfile.lock
