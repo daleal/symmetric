@@ -18,7 +18,7 @@ Raw developing speed and ease of use, that's why. While `Flask` is a powerful to
 - Auto-generated `/docs` endpoint for your API with **interactive documentation**.
 - Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation files for your API.
 
-The [complete documentation](https://symmetric.one/docs/) is available on the [official website](https://symmetric.one/).
+The [complete documentation](https://symmetric.one/docs/basic-usage/) is available on the [official website](https://symmetric.one/).
 
 ## Installing
 
