@@ -6,9 +6,9 @@ license = "MIT"
 authors = ["Daniel Leal <dlleal@uc.cl>"]
 maintainers = ["Daniel Leal <dlleal@uc.cl>"]
 readme = "README.md"
-homepage = "https://github.com/daleal/symmetric"
+homepage = "https://symmetric.one/"
 repository = "https://github.com/daleal/symmetric"
-documentation = "https://github.com/daleal/symmetric"
+documentation = "https://symmetric.one/docs/"
 classifiers = [
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
