@@ -31,6 +31,7 @@ exclude = [
     ".github",
     ".flake8",
     ".pylintrc",
+    "assets",
     "docs",
     "environment.sh"
 ]

@@ -16,25 +16,13 @@ Install using pip!
 pip install symmetric
 ```
 
-Once installed, you should be able to get the `help` message from the CLI:
+Once installed, you should be able to get the version number from the CLI:
 
 ```bash
-symmetric -h
+symmetric --version
 ```
 
-And get a result like this:
-
-```bash
-usage: symmetric [-h] {run,docs} ...
-
-Command line interface tool for symmetric.
-
-positional arguments:
-  {run,docs}  Action to be executed.
-
-optional arguments:
-  -h, --help  show this help message and exit
-```
+If you see something like `symmetric version 3.4.0`, then you are ready to use `symmetric`.
 
 ## Running the development server
 

@@ -25,6 +25,34 @@
   height: 100%;
 }
 
+.s-logo {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--dark-accent-color);
+  background: var(--secondary-navbar-color);
+  font-size: 1.5rem;
+  letter-spacing: 0.3ch;
+  width: 100%;
+}
+
+.s-logo svg {
+  transform: rotate(0deg);
+  transition: 200ms;
+}
+
+.s-logo-text {
+  display: inline;
+  position: absolute;
+  left: -999px;
+  transition: var(--transition-speed);
+}
+
+.s-navbar:hover .s-logo svg {
+  transform: rotate(-360deg);
+}
+
 .s-nav-item {
   width: 100%;
 }
@@ -60,6 +88,9 @@
   width: 2rem;
   min-width: 2rem;
   max-width: 2rem;
+  height: 2rem;
+  min-height: 2rem;
+  max-height: 2rem;
   margin: 0 1.5rem;
 }
 
@@ -86,6 +117,10 @@
 
   .s-navbar-nav {
     flex-direction: row;
+  }
+
+  .s-logo {
+    display: none;
   }
 
   .s-nav-link {
@@ -118,5 +153,15 @@
   .s-navbar:hover .s-link-text {
     visibility: visible;
     opacity: 1;
+  }
+
+  .s-navbar:hover .s-logo svg
+  {
+    margin-left: 12.5rem;
+  }
+
+  .s-navbar:hover .s-logo-text
+  {
+    left: 0px;
   }
 }

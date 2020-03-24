@@ -1,5 +1,5 @@
 ---
-layout: content
+layout: landing
 ---
 
 # Symmetric
