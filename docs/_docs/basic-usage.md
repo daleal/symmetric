@@ -22,7 +22,7 @@ Once installed, you should be able to get the version number from the CLI:
 symmetric --version
 ```
 
-If you see something like `symmetric version 3.4.0`, then you are ready to use `symmetric`.
+If you see something like `symmetric version 3.4.1`, then you are ready to use `symmetric`.
 
 ## Running the development server
 

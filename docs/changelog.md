@@ -5,6 +5,18 @@ title: Change Log
 
 # Change Log
 
+## [3.4.1](https://github.com/daleal/symmetric/pull/75) - 23-03-2020
+
+### Added
+
+- Added a `--version (-v)` flag to the CLI to get `symmetric`'s version
+- Added a Change Log to the documentation
+- Added some assets to the project
+
+### Changed
+
+- Change documentation's navbar
+
 ## [3.4.0](https://github.com/daleal/symmetric/pull/71) - 22-03-2020
 
 ### Added
