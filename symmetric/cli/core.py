@@ -5,6 +5,7 @@ A module to route the CLI traffic.
 import sys
 import argparse
 
+import symmetric
 import symmetric.cli.utils
 
 
@@ -44,6 +45,14 @@ def generate_parser():
     # Create parser
     parser = argparse.ArgumentParser(
         description="Command line interface tool for symmetric."
+    )
+
+    # Add version command
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"symmetric version {symmetric.__version__}"
     )
 
     # In order to allow the CLI utility grow, the parser will include an

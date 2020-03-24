@@ -13,6 +13,7 @@ To get help from the command line, simply run `symmetric -h` to see the complete
 ## Global Options
 
 - `--help (-h)`: Display help information and exit.
+- `--version (-v)`: Display `symmetric`'s version number and exit.
 
 ## `run`
 

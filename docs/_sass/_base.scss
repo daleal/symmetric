@@ -3,6 +3,11 @@
   background-color: var(--soft-color);
 }
 
+// Helpers
+.margin-auto {
+  margin: auto !important;
+}
+
 // Scrollbar
 ::-webkit-scrollbar {
   height: 0.25rem;
