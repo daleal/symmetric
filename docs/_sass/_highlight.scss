@@ -4,7 +4,7 @@ code.highlighter-rouge {
   background-color: var(--white-color);
   color: var(--medium-accent-color);
   box-shadow: 0 2px 0 var(--shadow-color);
-  white-space: nowrap;
+  white-space: pre-wrap;
 }
 
 pre .highlight,

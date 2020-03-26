@@ -4,7 +4,7 @@
 @import "variables";
 
 
-.content-container {
+.raw-container {
   margin-left: 5em;
 }
 
@@ -39,7 +39,7 @@
 
 .s-logo svg {
   transform: rotate(0deg);
-  transition: 200ms;
+  transition: 250ms;
 }
 
 .s-logo-text {
@@ -127,13 +127,20 @@
     justify-content: center;
   }
 
+  .s-nav-link svg {
+    margin: 0 auto;
+  }
+
   .s-link-text {
     display: none;
   }
 
-  .content-container {
+  .raw-container {
     margin-left: 0;
     margin-bottom: 5em;
+  }
+
+  .content-container {
     padding: 1rem;
   }
 }
@@ -163,5 +170,9 @@
   .s-navbar:hover .s-logo-text
   {
     left: 0px;
+  }
+
+  .s-logo-duplicate {
+    display: none;
   }
 }

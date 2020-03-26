@@ -15,6 +15,7 @@ collections:
   docs:
     output: true
     order:
+      - introduction.md
       - basic-usage.md
       - decorator.md
       - cli.md

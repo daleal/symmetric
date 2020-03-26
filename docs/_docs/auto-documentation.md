@@ -4,7 +4,7 @@ title: Auto Documentation
 permalink: /docs/auto-documentation/
 ---
 
-# Automatic Documentation
+# Automatic Docs
 
 Generating API documentation is simple with `symmetric`. Just run the following command:
 
@@ -27,5 +27,7 @@ You can also specify the name of the documentation file (defaults to `openapi.js
 ## ReDoc Documentation
 
 By default, you can `GET` the `/docs` endpoint (using a browser) to access the **interactive auto-generated documentation** about your API. It will include request bodies for each endpoint, response codes, authentication required, default values, and much more!
+
+![](/assets/images/example-redoc.png)
 
 **Tip**: Given that the [ReDoc Documentation](https://github.com/Redocly/redoc) is based on the OpenAPI standard, using **type annotations** in your code will result in a more detailed interactive documentation. Instead of the parameters being allowed to be any type, they will be forced into the type declared in your code. Cool, right?

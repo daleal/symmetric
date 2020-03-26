@@ -1,6 +1,7 @@
 ---
 layout: content
 title: Change Log
+permalink: /changelog/
 ---
 
 # Change Log
@@ -21,7 +22,7 @@ title: Change Log
 
 ### Added
 
-- Complete docs can now be located at a [dedicated webpage](https://symmetric.one/docs/basic-usage/)
+- Complete docs can now be located at a [dedicated webpage](https://symmetric.one/docs/)
 
 ### Changed
 
