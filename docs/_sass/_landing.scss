@@ -14,7 +14,7 @@
 }
 
 .hero-foot {
-  height: 9rem;
+  height: 6.5rem;
 }
 
 // Jumping arrows
@@ -43,11 +43,11 @@
   margin-bottom: 5rem;
 }
 
-#info-1 {
+#landing-example {
   background-color: var(--white-color);
 }
 
-#info-3 {
+#landing-open-source {
   background-color: var(--black-color);
   color: var(--soft-color);
 }
@@ -76,6 +76,10 @@
 
   .secondary-title {
     margin-bottom: 2rem;
+  }
+
+  .hero.is-fullheight {
+    min-height: calc(100vh - 5em);
   }
 }
 
