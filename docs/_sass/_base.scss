@@ -58,8 +58,13 @@ h4 {
 
 // Paragraphs and general elements
 a {
-  color: var(--hard-contrasty-color)
+  color: var(--hard-contrasty-color);
 }
+
+a:hover {
+  color: var(--medium-accent-color);
+}
+
 p {
   margin: 0.5rem 0;
 }
