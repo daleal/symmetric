@@ -6,6 +6,21 @@ permalink: /changelog/
 
 # Change Log
 
+## [3.4.2](https://github.com/daleal/symmetric/pull/78) - 26-03-2020
+
+### Added
+
+- Added a landing page to the website
+- Added a deprecation warning to markdown documentation generator
+
+### Changed
+
+- Change "slogan"
+
+### Fixed
+
+- Fixed mobile navbar to include a 5th element
+
 ## [3.4.1](https://github.com/daleal/symmetric/pull/75) - 23-03-2020
 
 ### Added
