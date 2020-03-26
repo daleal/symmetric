@@ -23,7 +23,9 @@
 }
 
 // Main Container
-.content-container {
+.raw-container {
+  width: 100%;
+  height: 100%;
   font-size: 100%;
   font-weight: 400;
   font-family: var(--font-family);
@@ -55,6 +57,9 @@ h4 {
 }
 
 // Paragraphs and general elements
+a {
+  color: var(--hard-contrasty-color)
+}
 p {
   margin: 0.5rem 0;
 }

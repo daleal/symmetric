@@ -46,10 +46,10 @@ It will search for the `symmetric` object inside `<module>`. Failing to find it 
 
 By default, this will **automagically** generate a `json` file named `openapi.json` documenting the API with an OpenAPI specification. Seems too simple to be true, right? Go ahead, try it yourself! Also, don't be afraid of using **[type annotations](https://docs.python.org/3/library/typing.html)**... The annotations will be documented too! They will restrict the parameter types within the OpenAPI generated `json`!
 
-Using the `--markdown` flag will result in a markdown file named `documentation.md` documenting each endpoint with the function docstring, required arguments and more data about that endpoint.
+~~Using the `--markdown` flag will result in a markdown file named `documentation.md` documenting each endpoint with the function docstring, required arguments and more data about that endpoint.~~ **Important Note**: This feature is still supported, but it is **deprecated**. It will not receive updates and will probably be removed in favor of the more standard and complete **OpenAPI documentation** on some major release.
 
 ### Options
 
 - `--help (-h)`: Display help information and exit.
 - `--filename <filename> (-f <filename>)`: Specify the name of the file in which the documentation will be written.
-- `--markdown (-m)`: Generate simpler, human-readable Markdown documentation.
+- ~~`--markdown (-m)`: Generate simpler, human-readable Markdown documentation.~~ **Deprecated**

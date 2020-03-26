@@ -3,22 +3,22 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff&label=version)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/symmetric?style=for-the-badge&logo=python&color=306998&logoColor=%23fff)
 
-A powerful yet lean wrapper over **[Flask](https://github.com/pallets/flask)** to massively speed up **[API](https://en.wikipedia.org/wiki/Web_API)** creations and enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations.
+A powerful tool to enable super fast module-to-**[API](https://en.wikipedia.org/wiki/Web_API)** transformations. Learn in minutes, implement in seconds. Batteries included.
 
 ![Tests Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/tests?label=tests&logo=github&style=for-the-badge)
 ![Linters Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/linters?label=linters&logo=github&style=for-the-badge)
 
 ## Why Symmetric?
 
-Raw developing speed and ease of use, that's why. While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, especially if you have never used it before. The idea behind `symmetric` is to be able to take any module **already written** and transform it into a working API in a matter of minutes, instead of having to design the module ground-up to work with `Flask` (it can also be used to build an API from scratch really fast). With `symmetric`, you will also get some neat features, namely:
+Raw developing speed and ease of use, that's why. `symmetric` is based on **[Flask](https://github.com/pallets/flask)**! While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, especially if you have never used it before. The idea behind `symmetric` is to be able to take any module **already written** and transform it into a working API in a matter of minutes, instead of having to design the module ground-up to work with `Flask` (it can also be used to build an API from scratch really fast). With `symmetric`, you will also get some neat features, namely:
 
 - Auto logging.
 - Server-side error detection and exception handling.
-- Native support for an authentication token on a per-endpoint basis.
 - Auto-generated `/docs` endpoint for your API with **interactive documentation**.
+- Native support for an authentication token on a per-endpoint basis.
 - Auto-generated [OpenAPI Specification](https://swagger.io/docs/specification/about/) and Markdown documentation files for your API.
 
-The [complete documentation](https://symmetric.one/docs/basic-usage/) is available on the [official website](https://symmetric.one/).
+The [complete documentation](https://symmetric.one/docs/) is available on the [official website](https://symmetric.one/).
 
 ## Installing
 

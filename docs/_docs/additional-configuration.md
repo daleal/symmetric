@@ -4,7 +4,7 @@ title: Additional Configuration
 permalink: /docs/additional-configuration/
 ---
 
-# Additional Configuration
+# Additional Configs
 
 Other than the configuration options already covered in this document, the following are also available:
 

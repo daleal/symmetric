@@ -98,6 +98,12 @@ if __name__ == '__main__':
     print(call_secret())
 ```
 
+## The `/docs` endpoint
+
+The `/docs` endpoint would look something like this:
+
+![](/assets/images/example-redoc.png)
+
 ## OpenAPI documentation
 
 Running `symmetric docs example` would result in a file `openapi.json` being created with the following content:
@@ -239,7 +245,9 @@ Running `symmetric docs example` would result in a file `openapi.json` being cre
 }
 ```
 
-## Markdown documentation
+## ~~Markdown documentation~~
+
+**Important Note**: This feature is still supported, but it is **deprecated**. It will not receive updates and will probably be removed in favor of the more standard and complete **OpenAPI documentation** on some major release.
 
 Running `symmetric docs example --markdown` would result in a file `documentation.md` being created with the following content:
 
