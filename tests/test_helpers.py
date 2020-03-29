@@ -10,6 +10,123 @@ import symmetric.helpers
 import symmetric.constants
 
 
+class ModuleNameGetterTestCase(unittest.TestCase):
+    """Tests the get_module_name helper method."""
+    def setUp(self):
+        class SymmetricTest:
+            def __init__(self, endpoints):
+                self.endpoints = endpoints
+
+        class FunctionTest:
+            def __init__(self):
+                self.function = lambda x: x + 1
+
+        self.empty_object = SymmetricTest([])
+        self.object = SymmetricTest([FunctionTest()])
+
+        self.module_names = [
+            {"name": "test_module", "expected": "test_module"},
+            {"name": "test.module", "expected": "test"},
+            {"name": "test.module.string", "expected": "test"}
+        ]
+
+    def test_empty_object_module_getter(self):
+        """
+        Tests that the method fails to find an endpoint and returns 'symmetric'
+        """
+        self.assertEqual(
+            symmetric.helpers.get_module_name(self.empty_object),
+            "symmetric"
+        )
+
+    def test_object_module_getter(self):
+        """Tests that the method gets the expected root module name."""
+        for iii in range(len(self.module_names)):
+            with self.subTest(run=iii):
+                func = self.object.endpoints[0].function
+                func.__module__ = self.module_names[iii]["name"]
+                self.assertEqual(
+                    symmetric.helpers.get_module_name(self.object),
+                    self.module_names[iii]["expected"]
+                )
+
+
+class TypeGetterTestCase(unittest.TestCase):
+    """Tests the type_to_string helper method."""
+    def setUp(self):
+        self.types = [
+            {"type": str, "expected": "string"},
+            {"type": float, "expected": "number"},
+            {"type": int, "expected": "integer"},
+            {"type": bool, "expected": "boolean"},
+            {"type": type(None), "expected": "null"},
+            {"type": list, "expected": "array"},
+            {"type": dict, "expected": "object"},
+            {"type": tuple, "expected": "object"},
+            {"type": range, "expected": "object"},
+            {"type": hash, "expected": "object"},
+            {"type": set, "expected": "object"},
+            {"type": frozenset, "expected": "object"},
+            {"type": bytes, "expected": "object"},
+            {"type": bytearray, "expected": "object"},
+            {"type": memoryview, "expected": "object"}
+        ]
+
+    def test_type_getter(self):
+        """Tests that the method transforms types correctly."""
+        for iii in range(len(self.types)):
+            with self.subTest(run=iii):
+                self.assertEqual(
+                    symmetric.helpers.type_to_string(self.types[iii]["type"]),
+                    self.types[iii]["expected"]
+                )
+
+
+class HumanizerTestCase(unittest.TestCase):
+    """Tests the humanize helper method."""
+    def setUp(self):
+        self.easy_pre_humanized = [
+            "app",
+            "APP",
+            "App",
+            "aPp",
+            "apP",
+            "APp",
+            "ApP",
+            "aPP"
+        ]
+        self.easy_humanized = "App"
+        self.standard_pre_humanized = [
+            "cool_app_name",
+            "cool-app-name",
+            "cool app name",
+            "COOL_APP_NAME",
+            "COOL-APP-NAME",
+            "COOL APP NAME"
+        ]
+        self.standard_humanized = "Cool App Name"
+
+    def test_easy_humanization(self):
+        """Tests that the method humanizes easy cases."""
+        for iii in range(len(self.easy_pre_humanized)):
+            with self.subTest(run=iii):
+                self.assertEqual(
+                    symmetric.helpers.humanize(self.easy_pre_humanized[iii]),
+                    self.easy_humanized
+                )
+
+    def test_incorrect_routes(self):
+        """Tests that the method humanizes standard cases."""
+        for iii in range(len(self.standard_pre_humanized)):
+            with self.subTest(run=iii):
+                self.assertEqual(
+                    symmetric.helpers.humanize(
+                        self.standard_pre_humanized[iii]
+                    ),
+                    self.standard_humanized
+                )
+
+
 class RouteParserTestCase(unittest.TestCase):
     """Tests the route parser helper method."""
     def setUp(self):
