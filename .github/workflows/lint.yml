@@ -1,12 +1,6 @@
 name: linters
 
 on:
-  push:
-    paths:
-      - ".github/workflows/lint.yml"
-      - ".flake8"
-      - ".pylintrc"
-      - "symmetric/*.py"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
