@@ -8,6 +8,10 @@ A powerful tool to enable super fast module-to-**[API](https://en.wikipedia.org/
 ![Tests Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/tests?label=tests&logo=github&style=for-the-badge)
 ![Linters Workflow](https://img.shields.io/github/workflow/status/daleal/symmetric/linters?label=linters&logo=github&style=for-the-badge)
 
+## Disclaimer
+
+`symmetric` is **no longer being maintained**. But don't worry! Its spiritual successor, [`asymmetric`](https://github.com/daleal/asymmetric), has an **essentially identical API**, and is faster, better designed, and has a bunch of new _features_. The `symmetric` token is the only _feature_ present in `symmetric` that won't be part of `asymmetric`. Other than that, you can port your code performing a search and replace, replacing all the appearances of `symmetric` for `asymmetric`. Thank you for being a part of this project! Hope to see you around [`asymmetric`](https://github.com/daleal/asymmetric)!
+
 ## Why Symmetric?
 
 Raw developing speed and ease of use, that's why. `symmetric` is based on **[Flask](https://github.com/pallets/flask)**! While `Flask` is a powerful tool to have, getting it to work from scratch can be a bit of a pain, especially if you have never used it before. The idea behind `symmetric` is to be able to take any module **already written** and transform it into a working API in a matter of minutes, instead of having to design the module ground-up to work with `Flask` (it can also be used to build an API from scratch really fast). With `symmetric`, you will also get some neat features, namely:

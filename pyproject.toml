@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "symmetric"
-version = "3.4.2"
+version = "3.4.3"
 description = "A powerful tool to enable super fast module-to-API transformations. Learn in minutes, implement in seconds. Batteries included."
 license = "MIT"
 authors = ["Daniel Leal <dlleal@uc.cl>"]

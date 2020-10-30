@@ -48,7 +48,6 @@ def get_openapi_endpoint_body(endpoint):
     if params.args:
         parameters_amount = len(params.args)
         defaults_amount = 0 if not params.defaults else len(params.defaults)
-        defaults_amount = len(params.defaults)
         no_defaults = parameters_amount - defaults_amount
         for ii in range(no_defaults):
             if params.args[ii] not in params.annotations:
