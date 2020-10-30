@@ -1,6 +1,6 @@
-<svg width="1347" height="1347" viewBox="0 0 1347 1347" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="1580" height="1580" viewBox="0 0 1580 1580" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g id="symmetric-logo">
-    <path id="symmetric" fill-rule="evenodd" clip-rule="evenodd" d="M1028 1066.74L221.248 357.007L80 657L257.786 1034.6L687 1191L1028 1066.74ZM348.355 246.402L687 123L1116.21 279.405L1294 657L1153.73 954.918L348.355 246.402Z" fill="currentColor" class="fa-secondary" />
-    <line id="line" x1="81.4022" y1="124.715" x2="1295.4" y2="1192.72" stroke="currentColor" stroke-width="86" class="fa-primary" />
+    <path id="symmetric" fill-rule="evenodd" clip-rule="evenodd" d="M1307.04 411L657.519 36L8 411V1161L657.519 1536L962.6 1359.86L590.478 786.75H1307.04V411Z" fill="currentColor" class="fa-secondary" />
+    <path id="triangle" d="M1453.55 846.25L1076.02 1425.03L698.492 846.25H1453.55Z" stroke="currentColor" stroke-width="130" class="fa-primary" />
   </g>
 </svg>

@@ -14,18 +14,12 @@
 }
 
 .hero-foot {
-  height: 9rem;
+  height: 6.5rem;
 }
 
 // Jumping arrows
 @keyframes main-jump-down {
   0% { top: -1.5rem; } 50% { top: 1.5rem; } 100% { top: -1.5rem; }
-}
-@keyframes code-jump-right {
-  0% { left: -1.5rem; } 50% { left: 1.5rem; } 100% { left: -1.5rem; }
-}
-@keyframes code-jump-down {
-  0% { top: -0.5rem; } 50% { top: 0.5rem; } 100% { top: -0.5rem; }
 }
 
 #main-arrow-down {
@@ -49,11 +43,11 @@
   margin-bottom: 5rem;
 }
 
-#info-1 {
+#landing-example {
   background-color: var(--white-color);
 }
 
-#info-3 {
+#landing-open-source {
   background-color: var(--black-color);
   color: var(--soft-color);
 }
@@ -64,16 +58,6 @@
   height: 100%;
   display: block;
   margin: 0 auto;
-}
-
-#code-arrow-right {
-  position: relative;
-  animation: code-jump-right 2s infinite;
-}
-
-#code-arrow-down {
-  position: relative;
-  animation: code-jump-down 2s infinite;
 }
 
 // Mobile
@@ -92,6 +76,10 @@
 
   .secondary-title {
     margin-bottom: 2rem;
+  }
+
+  .hero.is-fullheight {
+    min-height: calc(100vh - 5em);
   }
 }
 
