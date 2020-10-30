@@ -6,6 +6,21 @@ permalink: /changelog/
 
 # Change Log
 
+## [3.4.3](https://github.com/daleal/symmetric/releases/tag/3.4.3) - 30-10-2020
+
+### End of life
+
+`symmetric` has reached its end of life! 💀 But don't worry! You can use its spiritual successor, [`asymmetric`](https://github.com/daleal/asymmetric). Its API is almost identical! You can learn more on the `README.md` file!
+
+### Changed
+
+- Changed a bunch of stuff for the documentation
+- Added a **disclaimer** section to warn about the project's status
+
+### Fixed
+
+- Fixed documentation bug that happened when no default parameters existed on a decorated function.
+
 ## [3.4.2](https://github.com/daleal/symmetric/releases/tag/3.4.2) - 26-03-2020
 
 ### Added
